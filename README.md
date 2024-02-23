@@ -30,23 +30,43 @@
         echo "alias sail='./vendor/bin/sail'" >> ~/.bashrc
         source ~/.bashrc
         ```
--   Run sail
+-   #### Run sail
+    Sail is a docker-compose wrapper for Laravel, it will start the docker containers and run the Laravel application.
+    It also manages php, npm, and artisan commands
     ```bash
     sail up -d
     ```
--   Run key generation
+-   #### Run key generation
+    The key will be added to the .env file, and it will be used for encrypting user sessions and other sensitive data
     ```bash
     sail artisan key:generate
     ```
--   Run migration
+-   #### Run migration
+
+    Migrations are used to create the database schema
+
     ```bash
     sail artisan migrate
     ```
--   Run seeding
+
+-   #### Run seeding
+
+    Seeders are used to populate the database with dummy data or default values
+
     ```bash
     sail artisan db:seed
     ```
--   Run npm install
+
+-   #### Run npm install
+
+    npm install, will install all the js dependencies for the project
+
     ```bash
     sail npm install
+    ```
+
+-   #### Run npm run dev
+    npm run dev, will compile the js and css files, and watch for changes in the files to recompile them automatically and auto-refresh the browser
+    ```bash
+    sail npm run dev
     ```
