@@ -11,6 +11,8 @@ class JWT
         $dummyPayload = [
             'iss' => 'http://localhost',
             'iat' => time(),
+            'tag_read_list' => ['*', 'ore:*'],
+            'tag_write_list' => ['ore:*'],
         ];
 
         return FirebaseJWT::encode($dummyPayload, config('app.jwt_secret'), 'HS256');

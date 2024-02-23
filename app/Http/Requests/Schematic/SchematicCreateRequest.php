@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Rules\CommaSeperatedUUID;
 
 class SchematicCreateRequest extends FormRequest
 {
@@ -28,6 +29,7 @@ class SchematicCreateRequest extends FormRequest
             'name' => 'required|string',
             'description' => 'required|string',
             'schematic' => 'required|file|mimetypes:application/gzip',
+            'authors' => ['required', 'string', new CommaSeperatedUUID()],
         ];
     }
 

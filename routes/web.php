@@ -14,14 +14,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
 });
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
+Route::get('/auth/azure', function () {
+    $user = Socialite::driver('minecraft')->user();
+    dd($user);
+});
+
+Route::get('/auth/minecraft', function () {
+    return Socialite::driver('minecraft')->redirect();
+});
+
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');

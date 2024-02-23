@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+use App\Models\Player;
+
 use Illuminate\Support\Facades\Storage;
 
 class Schematic extends Model
@@ -24,6 +26,7 @@ class Schematic extends Model
     {
         static::creating(function ($schematic) {
             if (empty($schematic->id)) {
+                dd('creating schematic');
                 $schematic->id = Str::uuid();
             }
         });
@@ -41,5 +44,20 @@ class Schematic extends Model
             $link = str_replace('minio', 'localhost', $link);
         }
         return $link;
+    }
+
+    public function getBase64Attribute()
+    {
+        return base64_encode(Storage::disk('schematics')->get('schematics/' . $this->id . '.schem'));
+    }
+
+    public function authors()
+    {
+        return $this->belongsToMany(Player::class, 'players_schematics', 'schematic_id', 'player_id');
+    }
+
+    public function getStringIdAttribute()
+    {
+        return str_replace('-', '', $this->id);
     }
 }

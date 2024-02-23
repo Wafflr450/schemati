@@ -25,21 +25,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
+    protected $fillable = ['email', 'password', 'player_id'];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
-    ];
+    protected $hidden = ['password', 'remember_token', 'two_factor_recovery_codes', 'two_factor_secret'];
 
     /**
      * The attributes that should be cast.
@@ -55,7 +48,37 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $appends = [
-        'profile_photo_url',
-    ];
+    protected $appends = ['profile_photo_url'];
+
+    //when a user is created, if there is no player associated with the user, create a player (player_id) create one
+    public static function booted()
+    {
+        static::created(function ($user) {
+            if (!$user->player) {
+                $player = Player::create([
+                    'id' => $user->player_id,
+                ]);
+            }
+        });
+    }
+
+    public function schematics()
+    {
+        return $this->belongsToMany(Schematic::class, 'users_schematics');
+    }
+
+    public function player()
+    {
+        return $this->belongsTo(Player::class, 'player_id');
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->player->last_seen_name ?? $this->player_id;
+    }
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        return $this->player->head_url;
+    }
 }

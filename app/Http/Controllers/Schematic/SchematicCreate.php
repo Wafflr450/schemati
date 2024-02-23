@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\Schematic;
+use App\Models\Player;
 
 class SchematicCreate extends Controller
 {
@@ -19,7 +20,7 @@ class SchematicCreate extends Controller
     public function __invoke(SchematicCreateRequest $request)
     {
         $schematicUUID = Str::uuid();
-
+        $authors = explode(',', $request->authors);
         $schematic = new Schematic([
             'id' => $schematicUUID,
             'name' => $request->name,
@@ -35,7 +36,10 @@ class SchematicCreate extends Controller
                 500,
             );
         }
-
         $schematic->save();
+        $authors = array_map(function ($author) {
+            return Player::firstOrCreate(['id' => $author])->id;
+        }, $authors);
+        Schematic::find($schematicUUID)->authors()->attach($authors);
     }
 }
