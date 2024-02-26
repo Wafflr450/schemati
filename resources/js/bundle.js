@@ -7362,7 +7362,6 @@ class RessourceLoader {
     }
     splitSchemaIntoChunks(dimensions = { chunkWidth: 64, chunkHeight: 64, chunkLength: 64 }) {
         const chunks = [];
-        // each chunk is a list of positions
         const { chunkWidth, chunkHeight, chunkLength } = dimensions;
         const { width, height, length } = this.schematic;
         const chunkCountX = Math.ceil(width / chunkWidth);
@@ -7384,7 +7383,7 @@ class RessourceLoader {
     processChunkBlocks(materialGroups, chunk, chunkDimensions, offset) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const maxBlocksAllowed = 100000;
+            const maxBlocksAllowed = 1000000;
             let count = 0;
             for (const pos of chunk) {
                 if (count > maxBlocksAllowed) {

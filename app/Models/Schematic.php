@@ -46,9 +46,14 @@ class Schematic extends Model
         return $link;
     }
 
+    public function getFileAttribute()
+    {
+        return Storage::disk('schematics')->get('schematics/' . $this->id . '.schem');
+    }
+
     public function getBase64Attribute()
     {
-        return base64_encode(Storage::disk('schematics')->get('schematics/' . $this->id . '.schem'));
+        return base64_encode($this->file);
     }
 
     public function authors()

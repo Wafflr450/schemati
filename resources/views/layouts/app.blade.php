@@ -21,6 +21,7 @@
 </head>
 
 <body class="font-sans antialiased">
+    <livewire:toasts />
     <x-banner />
 
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -131,6 +132,16 @@
                 return await getCachedMinecraftJarUrl();
             },
         };
+    </script>
+    <script>
+        function copyToClipboard(text) {
+            const input = document.createElement("input");
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand("copy");
+            document.body.removeChild(input);
+        }
     </script>
     @stack('scripts')
     @livewireScripts

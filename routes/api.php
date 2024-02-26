@@ -33,4 +33,16 @@ Route::prefix('v1')->group(function () {
 
         Route::post('/schematic', SchematicCreate::class);
     });
+    Route::get('/download-schematic/{id}', function (Request $request, $id) {
+        $schematic = \App\Models\Schematic::find($id);
+        if (!$schematic) {
+            return response()->json(['message' => 'Schematic not found'], 404);
+        }
+        $downloadPath = $schematic->downloadLink;
+        $fileName = $schematic->name . '.schem';
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+        ];
+        return \Response::make(Storage::disk('schematics')->get('schematics/' . $schematic->id . '.schem'), 200, $headers);
+    });
 });

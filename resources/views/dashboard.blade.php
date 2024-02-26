@@ -26,12 +26,11 @@ $deleteSchematic = function ($schematicId) {
 };
 
 ?>
-
 <x-app-layout>
     @volt
         <div class="p-4">
-            <div class="p-4 bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                <div>
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-4">
                     <h1 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Schematics
                     </h1>
@@ -41,48 +40,50 @@ $deleteSchematic = function ($schematicId) {
                             placeholder="Search for a schematic...">
                     </div>
                 </div>
-                <div class="p-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
                     @foreach ($this->schematics as $schematic)
-                        <div>
-                            <div class="flex flex-row justify-between items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg mb-4"
-                                wire:key="{{ $schematic->id }}">
-                                <div>
-                                    <div class="flex flex-row items-center">
-                                        <h2
-                                            class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight pr-2">
-                                            {{ $schematic->name }}
-                                        </h2>
-                                        @foreach ($schematic->authors as $player)
-                                            <img src="{{ $player->headUrl }}" alt="{{ $player->lastSeenName }}"
-                                                class="w-6 h-6 inline-block pr-1"
-                                                data-tooltip-target="tooltip-{{ $player->id }}-{{ $schematic->id }}">
-                                            <div id="tooltip-{{ $player->id }}-{{ $schematic->id }}" role="tooltip"
-                                                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                                                <p>{{ $player->lastSeenName }}</p>
-                                                <div class="tooltip-arrow" data-popper-arrow></div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <p class="text-gray-500 dark:text-gray-400">
-                                        {{ $schematic->description }}
-                                    </p>
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-lg flex flex-col">
+                            <div class="p-4">
+                                <h2 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-2">
+                                    {{ $schematic->name }}
+                                </h2>
+                                <div class="flex flex-wrap justify-center">
+                                    @foreach ($schematic->authors as $player)
+                                        <img src="{{ $player->headUrl }}" alt="{{ $player->lastSeenName }}"
+                                            class="w-8 h-8 rounded-full m-1">
+                                    @endforeach
                                 </div>
-                                <div class="flex flex-row items-center bg-gray-200 dark:bg-gray-400 rounded-lg p-2">
-                                    <a href="{{ $schematic->downloadLink }}" target="_blank"
-                                        class="text-sm text-gray-700 rounded-lg md:bg-transparent md:text-blue-700 md:p-2 dark:text-white">
-                                        <i class="fas fa-download text-blue-700"></i>
-                                    </a>
-                                    @auth
-                                        @if ($schematic->authors->contains(auth()->user()->player->id))
-                                            <button wire:click="deleteSchematic('{{ $schematic->id }}')"
-                                                class="text-sm text-gray-700 rounded-lg md:bg-transparent md:text-red-700 md:p-2 dark:text-white">
-                                                <i class="fas fa-trash text-red-700"></i>
-                                            </button>
-                                        @endif
-                                    @endauth
-                                </div>
+                                <p class="text-gray-500 dark:text-gray-400 mb-4 text-center">
+                                    {{ $schematic->description }}
+                                </p>
                             </div>
-                            <x-schematic-renderer :schematic="$schematic" />
+                            <div class="flex-grow">
+                                <x-schematic-renderer :schematic="$schematic" />
+                            </div>
+                            <div class="flex justify-center p-4">
+                                {{--  download command div "/download {{ $schematic->id }}" that copies to the clipboard  --}}
+
+                                <p class="mb-4 text-center cursor-pointer bg-gray-200 dark:bg-gray-300 dark:text-gray-700 p-2 rounded-lg active:bg-gray-300"
+                                    onclick="copyToClipboard('/download {{ $schematic->id }}'); Toast.success('Copied to clipboard')">
+                                    /download {{ $schematic->id }}
+                                </p>
+                            </div>
+                            <div class="flex justify-center p-4">
+                                <a href="{{ $schematic->downloadLink }}" target="_blank"
+                                    class="text-blue-700 dark:text-white hover:underline">
+                                    Download <i class="fas fa-download text-green-700"></i>
+                                </a>
+                                @auth
+                                    @if ($schematic->authors->contains(auth()->user()->player->id))
+                                        <button wire:click="deleteSchematic('{{ $schematic->id }}')"
+                                            class="ml-4 text-red-700 dark:text-white">
+                                            Delete <i class="fas fa-trash text-red-700"></i>
+
+                                        </button>
+                                    @endif
+                                @endauth
+
+                            </div>
                         </div>
                     @endforeach
                 </div>
