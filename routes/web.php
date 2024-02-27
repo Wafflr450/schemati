@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,20 +15,25 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('dashboard');
-});
+    return view('welcome');
+})->name('index');
 
 Route::get('/auth/azure', function () {
-    $user = Socialite::driver('minecraft')->user();
-    dd($user);
+    $minecraftUser = Socialite::driver('minecraft')->user();
+    $user = User::updateOrCreate([
+        'uuid' => $minecraftUser->uuid,
+    ]);
+
+    Auth::login($user, true);
+    return redirect()->route('index');
 });
 
 Route::get('/auth/minecraft', function () {
     return Socialite::driver('minecraft')->redirect();
-});
+})->name('login-minecraft');
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return redirect()->route('index');
     })->name('dashboard');
 });

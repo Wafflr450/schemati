@@ -1,42 +1,51 @@
 <?php
 
-use function Livewire\Volt\{mount, state};
+use function Livewire\Volt\{mount, state, computed};
 use App\Models\Schematic;
 
-state('schematics', Schematic::all());
+state(['search'])->url();
 
-$deleteSchematic = function ($schematicId) {
-    $schematic = Schematic::find($schematicId);
-    if (!$schematic) {
-        return;
-    }
-    $schematic->delete();
-    state('schematics', $this->schematics->filter(fn($s) => $s->id !== $schematicId));
-    $this->dispatch('schematicDeleted');
-};
+// TODO: Optimise and use full-text search
+$schematics = computed(function () {
+    return Schematic::where('name', 'like', '%' . $this->search . '%')
+        ->orWhere('description', 'like', '%' . $this->search . '%')
+        ->orWhereHas('authors', function ($query) {
+            $query->where('last_seen_name', 'like', '%' . $this->search . '%');
+        })
+        ->get();
+});
+
+//$deleteSchematic = function ($schematicId) {
+//    $schematic = \App\Models\Schematic::find($schematicId);
+//    if (!$schematic) {
+//        return;
+//    }
+//    $schematic->delete();
+//    state('schematics', $this->schematics->filter(fn($s) => $s->id !== $schematicId));
+//    $this->dispatch('schematicDeleted');
+//};
 
 ?>
-
-
 <x-app-layout>
     @volt
-        <div
-            class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg m-4">
-            @foreach ($schematics as $schematic)
-                <div class="p-6 bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg m-4">
-                    <h2>{{ $schematic->name }}</h2>
-                    <p class="text-gray-500 dark:text-gray-400 p-2">
-                        {{ $schematic->id }}</p>
-                    <p>{{ $schematic->description }}</p>
-                    <a href="{{ $schematic->downloadLink }}" target="_blank"
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download</a>
-
-                    <button wire:click="deleteSchematic('{{ $schematic->id }}')"
-                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                        Delete</button>
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-4">
+                    <h1 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        Schematics
+                    </h1>
+                    <div>
+                        <input type="text" wire:model.live="search"
+                            class="w-full p-2 mt-2 text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
+                            placeholder="Search for a schematic...">
+                    </div>
                 </div>
-            @endforeach
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                    @foreach ($this->schematics as $schematic)
+                        <x-schematic-card :schematic="$schematic" />
+                    @endforeach
+                </div>
+            </div>
         </div>
     @endvolt
-
 </x-app-layout>

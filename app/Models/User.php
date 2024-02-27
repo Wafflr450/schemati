@@ -10,53 +10,21 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use App\Utils\MinecraftAPI;
 
 class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
-    use HasProfilePhoto;
-    use HasTeams;
-    use Notifiable;
-    use TwoFactorAuthenticatable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = ['email', 'password', 'player_id'];
+    public $fillable = ['uuid'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = ['password', 'remember_token', 'two_factor_recovery_codes', 'two_factor_secret'];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array<int, string>
-     */
-    protected $appends = ['profile_photo_url'];
-
-    //when a user is created, if there is no player associated with the user, create a player (player_id) create one
     public static function booted()
     {
         static::created(function ($user) {
             if (!$user->player) {
                 $player = Player::create([
-                    'id' => $user->player_id,
+                    'id' => $user->uuid,
                 ]);
             }
         });
@@ -69,16 +37,16 @@ class User extends Authenticatable
 
     public function player()
     {
-        return $this->belongsTo(Player::class, 'player_id');
-    }
-
-    public function getNameAttribute()
-    {
-        return $this->player->last_seen_name ?? $this->player_id;
+        return $this->belongsTo(Player::class, 'uuid', 'id');
     }
 
     public function getProfilePhotoUrlAttribute()
     {
-        return $this->player->head_url;
+        return MinecraftAPI::getHeadImageURL($this->uuid);
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->player->last_seen_name ?? $this->uuid;
     }
 }

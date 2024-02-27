@@ -1,3 +1,19 @@
+@php
+    $links = [
+        [
+            'name' => 'Home',
+            'href' => '/',
+            'current' => true,
+        ],
+        [
+            'name' => 'Schematics',
+            'href' => '/schematics',
+            'current' => false,
+        ],
+    ];
+@endphp
+
+
 <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
     <div class="container flex flex-wrap justify-between items-center mx-auto">
         <a href="{{ route('dashboard') }}" class="flex items-center">
@@ -54,10 +70,8 @@
                     </button>
                 </div>
             @else
-                <a href="{{ route('login') }}"
+                <a href="{{ route('login-minecraft') }}"
                     class="text-sm text-gray-700 rounded-lg md:bg-transparent md:text-blue-700 md:p-2 dark:text-white">{{ __('Log in') }}</a>
-                <a href="{{ route('register') }}"
-                    class="text-sm text-gray-700 rounded-lg md:bg-transparent md:text-blue-700 md:p-2 dark:text-white">{{ __('Register') }}</a>
 
             @endauth
             <button data-collapse-toggle="mobile-menu" type="button"
@@ -73,13 +87,18 @@
         </div>
         <div class="hidden w-full md:block md:w-auto" id="mobile-menu">
             <ul class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
-                <!-- Additional links can be added here -->
-                <li>
+                {{--  <li>
                     <a href="#"
                         class="block py-2 pr-4 pl-3 text-gray-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white"
                         aria-current="page">Home</a>
-                </li>
-                <!-- More links -->
+                </li>  --}}
+                @foreach ($links as $link)
+                    <li>
+                        <a href="{{ $link['href'] }}" wire:navigate
+                            class="block py-2 pr-4 pl-3 text-gray-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white"
+                            aria-current="{{ $link['current'] ? 'page' : '' }}">{{ $link['name'] }}</a>
+                    </li>
+                @endforeach
             </ul>
         </div>
     </div>
