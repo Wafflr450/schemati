@@ -28,6 +28,14 @@ Route::get('/auth/azure', function () {
     return redirect()->route('index');
 });
 
+Route::get('/perf-test', function () {
+    return json_encode([
+        'server' => $_SERVER,
+        'time' => time(),
+        'memory' => memory_get_usage(),
+    ]);
+})->name('perf-test');
+
 Route::get('/auth/minecraft', function () {
     return Socialite::driver('minecraft')
         //->with(['prompt' => 'select_account'])

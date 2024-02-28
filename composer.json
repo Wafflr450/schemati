@@ -21,6 +21,7 @@
         "league/flysystem-aws-s3-v3": "^3.24",
         "livewire/livewire": "^3.0",
         "livewire/volt": "^1.6",
+        "mvanduijker/laravel-mercure-broadcaster": "^3.5",
         "socialiteproviders/microsoft": "^4.2",
         "socialiteproviders/microsoft-azure": "^5.1",
         "socialiteproviders/minecraft": "^5.0",
