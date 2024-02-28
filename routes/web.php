@@ -29,7 +29,9 @@ Route::get('/auth/azure', function () {
 });
 
 Route::get('/auth/minecraft', function () {
-    return Socialite::driver('minecraft')->redirect();
+    return Socialite::driver('minecraft')
+        //->with(['prompt' => 'select_account'])
+        ->redirect();
 })->name('login-minecraft');
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {

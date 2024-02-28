@@ -20,3 +20,7 @@ yarn-error.log
 .history
 
 public/jars
+
+/caddy
+frankenphp
+frankenphp-worker.php
