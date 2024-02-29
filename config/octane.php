@@ -23,6 +23,7 @@ use Laravel\Octane\Listeners\StopWorkerIfNecessary;
 use Laravel\Octane\Octane;
 
 return [
+
     /*
     |--------------------------------------------------------------------------
     | Octane Server
@@ -36,13 +37,7 @@ return [
     |
     */
 
-    'server' => env('OCTANE_SERVER', 'frankenphp'),
-
-    'mercure' => [
-        'publisher_jwt' => env('MERCURE_PUBLISHER_JWT'),
-        'subscriber_jwt' => env('MERCURE_SUBSCRIBER_JWT'),
-        'anonymous' => env('MERCURE_ANONYMOUS', 'true') === 'true',
-    ],
+    'server' => env('OCTANE_SERVER', 'roadrunner'),
 
     /*
     |--------------------------------------------------------------------------
@@ -69,7 +64,10 @@ return [
     */
 
     'listeners' => [
-        WorkerStarting::class => [EnsureUploadedFilesAreValid::class, EnsureUploadedFilesCanBeMoved::class],
+        WorkerStarting::class => [
+            EnsureUploadedFilesAreValid::class,
+            EnsureUploadedFilesCanBeMoved::class,
+        ],
 
         RequestReceived::class => [
             ...Octane::prepareApplicationForNextOperation(),
@@ -110,7 +108,10 @@ return [
             // CollectGarbage::class,
         ],
 
-        WorkerErrorOccurred::class => [ReportException::class, StopWorkerIfNecessary::class],
+        WorkerErrorOccurred::class => [
+            ReportException::class,
+            StopWorkerIfNecessary::class,
+        ],
 
         WorkerStopping::class => [
             //
@@ -128,7 +129,9 @@ return [
     |
     */
 
-    'warm' => [...Octane::defaultServicesToWarm()],
+    'warm' => [
+        ...Octane::defaultServicesToWarm(),
+    ],
 
     'flush' => [
         //
@@ -179,7 +182,17 @@ return [
     |
     */
 
-    'watch' => ['app', 'bootstrap', 'config', 'database', 'public/**/*.php', 'resources/**/*.php', 'routes', 'composer.lock', '.env'],
+    'watch' => [
+        'app',
+        'bootstrap',
+        'config',
+        'database',
+        'public/**/*.php',
+        'resources/**/*.php',
+        'routes',
+        'composer.lock',
+        '.env',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -206,4 +219,5 @@ return [
     */
 
     'max_execution_time' => 30,
+
 ];

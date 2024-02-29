@@ -21,6 +21,23 @@ export default {
         },
     },
     darkMode: 'media',
+    daisyui: {
+        themes: [
+            {
+                mytheme: {
+                    "primary": "#008fe5",
+                    "secondary": "#006f00",
+                    "accent": "#0000ff",
+                    "neutral": "#1b1b1b",
+                    "base-100": "#202126",
+                    "info": "#00f6ff",
+                    "success": "#a3f322",
+                    "warning": "#ffba00",
+                    "error": "#ff1f67",
+                },
+            },
+        ],
+    },
 
-    plugins: [forms, typography, require('flowbite/plugin')],
+    plugins: [forms, typography, require('flowbite/plugin'), require("daisyui")],
 };
