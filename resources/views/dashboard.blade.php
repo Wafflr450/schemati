@@ -29,20 +29,20 @@ $deleteSchematic = function ($schematicId) {
 <x-app-layout>
     @volt
         <div class="p-4">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="bg-base-100 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="p-4">
-                    <h1 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    <h1 class="font-semibold text-xl text-gray-200 leading-tight">
                         Schematics
                     </h1>
                     <div>
                         <input type="text" wire:model.live="search"
-                            class="w-full p-2 mt-2 text-gray-700 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded-lg"
+                            class="w-full p-2 mt-2 text-gray-200 bg-base-100 rounded-lg"
                             placeholder="Search for a schematic...">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
                     @foreach ($this->schematics as $schematic)
-                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-lg flex flex-col">
+                        <div class="bg-base-100 rounded-lg shadow-lg flex flex-col">
                             <div class="p-4">
                                 <h2 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-2">
                                     {{ $schematic->name }}

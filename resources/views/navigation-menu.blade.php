@@ -14,7 +14,7 @@
 @endphp
 
 
-<nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
+<nav class="bg-base-100 border-gray-200 px-2 sm:px-4 py-2.5 shadow-lg">
     <div class="container flex flex-wrap justify-between items-center mx-auto">
         <a href="{{ route('dashboard') }}" class="flex items-center">
             <x-application-mark class="block w-auto h-8" />
