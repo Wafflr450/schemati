@@ -18,7 +18,7 @@
                 for a new build to add to your world, or you're looking to share your own creations, schem.at is the
                 place for you.
             </p>
-            <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
+            <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0" id="view-schematics-cta">
                 <x-inputs.buttons.cta href="/schematics" content="View Schematics" />
             </div>
 
@@ -40,6 +40,15 @@
                     ease: "back"
                 })
                 .fromTo("#hero-animated-subtitle", {
+                    opacity: 0,
+                    y: 20
+                }, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "back"
+                }, "-=0.5")
+                .fromTo("#view-schematics-cta", {
                     opacity: 0,
                     y: 20
                 }, {
