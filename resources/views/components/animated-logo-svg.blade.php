@@ -36,36 +36,37 @@
     </svg>
 </div>
 
+@once
+    @push('scripts')
+        <script>
+            const orderOfAnimation = [
+                "bottom-left-cube-face",
+                "top-cube-face",
+                "bottom-right-cube-face",
+                "bottom-left-arrow",
+                "top-arrow",
+                "bottom-right-arrow",
+            ];
+            const cubeFaceAnimation = gsap.timeline({
+                repeat: 0,
+                repeatDelay: 0.5,
+            });
 
-@push('scripts')
-    <script>
-        const orderOfAnimation = [
-            "bottom-left-cube-face",
-            "top-cube-face",
-            "bottom-right-cube-face",
-            "bottom-left-arrow",
-            "top-arrow",
-            "bottom-right-arrow",
-        ];
-        const cubeFaceAnimation = gsap.timeline({
-            repeat: 0,
-            repeatDelay: 0.5,
-        });
-
-        orderOfAnimation.forEach((id, index) => {
-            cubeFaceAnimation.fromTo(
-                `#${id}`, {
-                    opacity: 0,
-                    scale: 0,
-                    transformOrigin: "center center",
-                }, {
-                    opacity: 1,
-                    scale: 1,
-                    duration: 0.5, // Duration of each individual animation
-                    ease: "back",
-                },
-                index * 0.1 // Start time of each animation
-            );
-        });
-    </script>
-@endpush
+            orderOfAnimation.forEach((id, index) => {
+                cubeFaceAnimation.fromTo(
+                    `#${id}`, {
+                        opacity: 0,
+                        scale: 0,
+                        transformOrigin: "center center",
+                    }, {
+                        opacity: 1,
+                        scale: 1,
+                        duration: 0.5, // Duration of each individual animation
+                        ease: "back",
+                    },
+                    index * 0.1 // Start time of each animation
+                );
+            });
+        </script>
+    @endpush
+@endonce

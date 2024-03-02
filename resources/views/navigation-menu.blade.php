@@ -17,8 +17,7 @@
 <nav class="bg-base-300 px-2 sm:px-4 py-2.5  shadow-pink-500 shadow-[inset 0px 0px 0px 2px]">
     <div class="container flex flex-wrap justify-between items-center mx-auto">
         <a href="{{ route('dashboard') }}" class="flex items-center">
-            <x-application-mark class="block w-auto h-8" />
-
+            <x-animated-logo-svg class="flex items-center justify-center w-8  rounded-full bg-primary-500" />
         </a>
         <div class="flex md:order-2">
             @auth
