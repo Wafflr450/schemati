@@ -143,6 +143,36 @@
             document.body.removeChild(input);
         }
     </script>
+    <script>
+        const konamiCode = [
+            "ArrowUp",
+            "ArrowUp",
+            "ArrowDown",
+            "ArrowDown",
+            "ArrowLeft",
+            "ArrowRight",
+            "ArrowLeft",
+            "ArrowRight",
+            "b",
+            "a",
+        ];
+        let konamiCodePosition = 0;
+        document.addEventListener("keydown", function(e) {
+            if (e.key === konamiCode[konamiCodePosition]) {
+                konamiCodePosition++;
+                Toast.info(e.key);
+                if (konamiCodePosition === konamiCode.length) {
+                    konamiCodePosition = 0;
+                    Toast.success("Konami Code activated!");
+                    setTimeout(() => {
+                        window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+                    }, 1000);
+                }
+            } else {
+                konamiCodePosition = 0;
+            }
+        });
+    </script>
     @stack('scripts')
     @livewireScripts
 </body>

@@ -12,5 +12,14 @@
             duration: 1,
             ease: "back"
         });
+
+        {{--  document.getElementById('hero-animated-logo').addEventListener('mouseenter', function() {
+            gsap.to("#hero-animated-logo", {
+                rotation: '+=360',
+                duration: 1,
+                ease: "back",
+                transformOrigin: "50% 60%"
+            });
+        });  --}}
     </script>
 @endpush
