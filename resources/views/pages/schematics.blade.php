@@ -2,6 +2,7 @@
 
 use function Livewire\Volt\{mount, state, computed};
 use App\Models\Schematic;
+use function Laravel\Folio\name;
 
 state(['search'])->url();
 

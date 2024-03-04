@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Helpers\JWT;
 
 use App\Http\Controllers\Schematic\SchematicCreate;
+use App\Http\Controllers\Schematic\SchematicUpload;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,6 +33,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::post('/schematic', SchematicCreate::class);
+        Route::post('/schematic-upload', SchematicUpload::class);
     });
     Route::get('/download-schematic/{id}', function (Request $request, $id) {
         $schematic = \App\Models\Schematic::find($id);

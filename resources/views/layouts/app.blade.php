@@ -14,6 +14,8 @@
 
 
     <!-- Scripts -->
+    <script defer src="http://localhost:3000/bundle.js" wire:ignore></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <!-- Styles -->
