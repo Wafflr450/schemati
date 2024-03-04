@@ -7,7 +7,7 @@ state(['schematic' => fn() => $schematic]);
 
 $deleteSchematic = function ($schematicId) {
     $schematic = \App\Models\Schematic::find($schematicId);
-    if (!$schematic) {
+    if (!$schrematic) {
         return;
     }
     $schematic->delete();
@@ -19,7 +19,7 @@ $deleteSchematic = function ($schematicId) {
 
 <div>
     @volt
-        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-lg flex flex-col">
+        <div class="bg-base-100 rounded-lg shadow-lg flex flex-col">
             <div class="p-4">
                 <h2 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-2">
                     {{ $schematic->name }}

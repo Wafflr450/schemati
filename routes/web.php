@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 use App\Models\User;
 /*
@@ -46,4 +48,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dashboard', function () {
         return redirect()->route('index');
     })->name('dashboard');
+});
+
+Route::get('/schematics/gif.worker.js', function () {
+    $content = Cache::rememberForever('gif.worker.js', function () {
+        $cdnUrl = 'https://cdn.jsdelivr.net/npm/gif.js/dist/gif.worker.js';
+        return Http::get($cdnUrl)->body();
+    });
+    return response($content, 200, ['Content-Type' => 'application/javascript']);
 });
