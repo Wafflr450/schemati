@@ -1,5 +1,15 @@
 <div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    <x-schematic-renderer :schematic="$schematic" />
+    {{--  <x-schematic-renderer :schematic="$schematic" />  --}}
+    @if ($schematic->preview_video)
+        <video class="w-full h-48 object-cover rounded-t-lg" src="{{ $schematic->preview_video }}" autoplay loop
+            muted></video>
+    @elseif ($schematic->preview_image)
+        <img class="w-full h-48 object-cover rounded-t-lg" src="{{ $schematic->preview_image }}"
+            alt="{{ $schematic->name }}">
+    @else
+        <div class="w-full h-48 bg-gray-200 rounded-t-lg dark:bg-gray-700"></div>
+    @endif
+
     <div class="px-5 pb-5">
         <a href="#">
             <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
@@ -9,7 +19,8 @@
         <div class="flex items-center mt-2.5 mb-5">
             <div class="flex items-center space-x-1 rtl:space-x-reverse">
                 @foreach ($schematic->authors as $player)
-                    <img src="{{ $player->headUrl }}" alt="{{ $player->lastSeenName }}" class="w-8 h-8 rounded-full m-1">
+                    <img src="{{ $player->headUrl }}" alt="{{ $player->lastSeenName }}"
+                        class="w-8 h-8 rounded-full m-1">
                 @endforeach
             </div>
             <span

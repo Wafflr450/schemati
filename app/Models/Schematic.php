@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Models\Player;
 
 use Illuminate\Support\Facades\Storage;
 
-class Schematic extends Model
+class Schematic extends Model implements HasMedia
 {
+    use InteractsWithMedia;
     use HasFactory;
 
     protected $fillable = ['name', 'description', 'id'];
@@ -64,5 +66,23 @@ class Schematic extends Model
     public function getStringIdAttribute()
     {
         return str_replace('-', '', $this->id);
+    }
+
+    public function getPreviewVideoAttribute()
+    {
+        $firstMedia = $this->getFirstMediaUrl('preview_video');
+        if (!$firstMedia) {
+            return null;
+        }
+        return str_replace('minio', 'localhost', $firstMedia);
+    }
+
+    public function getPreviewImageAttribute()
+    {
+        $firstMedia = $this->getFirstMediaUrl('preview_image');
+        if (!$firstMedia) {
+            return null;
+        }
+        return str_replace('minio', 'localhost', $firstMedia);
     }
 }

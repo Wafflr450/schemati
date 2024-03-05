@@ -9,6 +9,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
+
+use App\Forms\Components\SchematicPreviewRenderer;
 use Livewire\Volt\Component;
 name('schematics.upload');
 
@@ -36,6 +38,7 @@ new class extends Component implements HasForms {
             ->schema([
                 TextInput::make('title')->required(),
                 RichEditor::make('content'),
+                SchematicPreviewRenderer::make('schematicPreview')->required(),
                 // ...
             ])
             ->statePath('data');
