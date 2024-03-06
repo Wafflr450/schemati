@@ -40,7 +40,7 @@ Route::get('/perf-test', function () {
 
 Route::get('/auth/minecraft', function () {
     return Socialite::driver('minecraft')
-        //->with(['prompt' => 'select_account'])
+        ->with(['prompt' => 'select_account'])
         ->redirect();
 })->name('login-minecraft');
 

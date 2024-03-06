@@ -1,13 +1,12 @@
-<div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    {{--  <x-schematic-renderer :schematic="$schematic" />  --}}
+<div class="w-full max-w-sm rounded-lg shadow bg-base-100 ">
     @if ($schematic->preview_video)
-        <video class="w-full h-48 object-cover rounded-t-lg" src="{{ $schematic->preview_video }}" autoplay loop
-            muted></video>
+        <video class="w-full h-48 object-cover rounded-t-lg" src="{{ $schematic->preview_video }}" loop
+            id="preview-video_{{ $schematic->id }}" muted></video>
     @elseif ($schematic->preview_image)
         <img class="w-full h-48 object-cover rounded-t-lg" src="{{ $schematic->preview_image }}"
             alt="{{ $schematic->name }}">
     @else
-        <div class="w-full h-48 bg-gray-200 rounded-t-lg dark:bg-gray-700"></div>
+        <div class="w-full h-48 bg-gray-200 rounded-t-lg "></div>
     @endif
 
     <div class="px-5 pb-5">
@@ -37,3 +36,15 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        const video_{{ $schematic->string_id }} = document.getElementById('preview-video_{{ $schematic->id }}');
+        //only play when the mouse is over the video
+        video_{{ $schematic->string_id }}.addEventListener('mouseover', () => {
+            video_{{ $schematic->string_id }}.play();
+        });
+        video_{{ $schematic->string_id }}.addEventListener('mouseout', () => {
+            video_{{ $schematic->string_id }}.pause();
+        });
+    </script>
+@endpush

@@ -32,30 +32,28 @@ class Schematic extends Model implements HasMedia
                 $schematic->id = Str::uuid();
             }
         });
-
-        static::deleting(function ($schematic) {
-            Storage::disk('schematics')->delete('schematics/' . $schematic->id . '.schem');
-        });
     }
 
     public function getDownloadLinkAttribute()
     {
-        $link = Storage::disk('schematics')->url('schematics/' . $this->id . '.schem');
-        //if the link is to minio we are inside the docker container and need to replace it with localhost
-        if (Str::contains($link, 'minio')) {
-            $link = str_replace('minio', 'localhost', $link);
-        }
-        return $link;
+        $link = $this->getFirstMediaUrl('schematics');
+        return str_replace('minio', 'localhost', $link);
     }
 
     public function getFileAttribute()
     {
-        return Storage::disk('schematics')->get('schematics/' . $this->id . '.schem');
+        $media = $this->getFirstMedia('schematic');
+        $disk = $media->disk;
+        $fileName = $media->file_name;
+        $model_id = $media->model_id;
+        return Storage::disk($disk)->get($model_id . '/' . $fileName);
     }
 
     public function getBase64Attribute()
     {
-        return base64_encode($this->file);
+        $file = $this->file;
+        $b64 = base64_encode($file);
+        return $b64;
     }
 
     public function authors()

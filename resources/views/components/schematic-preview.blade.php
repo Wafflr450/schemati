@@ -30,15 +30,13 @@ $deleteSchematic = function ($schematicId) {
                     @endforeach
                 </div>
                 <p class="text-gray-500 dark:text-gray-400 mb-4 text-center">
-                    {{ $schematic->description }}
+                    {!! $schematic->description !!}
                 </p>
             </div>
             <div class="flex-grow">
                 <x-schematic-renderer :schematic="$schematic" />
             </div>
             <div class="flex justify-center p-4">
-                {{--  download command div "/download {{ $schematic->id }}" that copies to the clipboard  --}}
-
                 <p class="mb-4 text-center cursor-pointer bg-gray-200 dark:bg-gray-300 dark:text-gray-700 p-2 rounded-lg active:bg-gray-300 hover:bg-gray-300"
                     onclick="copyToClipboard('/download {{ $schematic->id }}'); Toast.success('Copied to clipboard')">
                     /download {{ $schematic->id }}

@@ -50,7 +50,7 @@ new class extends Component implements HasForms {
             ])
             ->statePath('data');
     }
-    public function create(): void
+    public function create()
     {
         $schematicUUID = Str::uuid();
         $authors = explode(',', $this->author);
@@ -62,7 +62,7 @@ new class extends Component implements HasForms {
         $schematic->save();
         $schematic = Schematic::find($schematicUUID);
         $schematic
-            ->addMediaFromBase64($schematicBase64)
+            ->addMediaFromBase64($this->schematicBase64)
             ->usingFileName($schematicUUID . '.schem')
             ->toMediaCollection('schematic');
         $schematic
@@ -73,6 +73,7 @@ new class extends Component implements HasForms {
             ->addMediaFromBase64($this->data['schematicPreview']['png'])
             ->usingFileName($schematicUUID . '.png')
             ->toMediaCollection('preview_image');
+        return redirect('/index') . "/schematics/{$schematicUUID}";
     }
 };
 ?>

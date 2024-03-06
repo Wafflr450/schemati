@@ -19,8 +19,8 @@ $schematics = computed(function () {
 
 <x-app-layout>
     @volt
-        <div class="max-w-7xl mx-auto">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+        <div class="max-w-7xl mx-auto pt-4">
+            <div class="bg-base-300 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="p-4">
                     <h1 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Schematics
