@@ -15,18 +15,8 @@ $schematics = computed(function () {
         })
         ->get();
 });
-
-//$deleteSchematic = function ($schematicId) {
-//    $schematic = \App\Models\Schematic::find($schematicId);
-//    if (!$schematic) {
-//        return;
-//    }
-//    $schematic->delete();
-//    state('schematics', $this->schematics->filter(fn($s) => $s->id !== $schematicId));
-//    $this->dispatch('schematicDeleted');
-//};
-
 ?>
+
 <x-app-layout>
     @volt
         <div class="max-w-7xl mx-auto">

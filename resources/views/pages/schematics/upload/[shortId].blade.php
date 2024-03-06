@@ -19,14 +19,16 @@ new class extends Component implements HasForms {
 
     public $shortId;
     public $schematicBase64;
+    public $author;
     public ?array $data = [];
 
     public function mount($shortId)
     {
         $cacheKey = Cache::get("schematic-temporary-short-links:{$shortId}");
-        if (!$cacheKey) {
+        if (!$cacheKey || strlen($cacheKey) === 0) {
             $this->redirect('/schematics');
         }
+        $author = explode(':', $cacheKey)[1];
         $schematicFile = Cache::get($cacheKey);
         $this->schematicBase64 = base64_encode($schematicFile);
         $this->form->fill();
@@ -38,14 +40,39 @@ new class extends Component implements HasForms {
             ->schema([
                 TextInput::make('title')->required(),
                 RichEditor::make('content'),
-                SchematicPreviewRenderer::make('schematicPreview')->required(),
+                SchematicPreviewRenderer::make('schematicPreview')
+                    ->viewData([
+                        'schematicBase64' => $this->schematicBase64,
+                        'schematicId' => $this->shortId,
+                    ])
+                    ->required(),
                 // ...
             ])
             ->statePath('data');
     }
     public function create(): void
     {
-        dd($this->form->getState());
+        $schematicUUID = Str::uuid();
+        $authors = explode(',', $this->author);
+        $schematic = new Schematic([
+            'id' => $schematicUUID,
+            'name' => $this->data['title'],
+            'description' => $this->data['content'],
+        ]);
+        $schematic->save();
+        $schematic = Schematic::find($schematicUUID);
+        $schematic
+            ->addMediaFromBase64($schematicBase64)
+            ->usingFileName($schematicUUID . '.schem')
+            ->toMediaCollection('schematic');
+        $schematic
+            ->addMediaFromBase64($this->data['schematicPreview']['webm'])
+            ->usingFileName($schematicUUID . '.webm')
+            ->toMediaCollection('preview_video');
+        $schematic
+            ->addMediaFromBase64($this->data['schematicPreview']['png'])
+            ->usingFileName($schematicUUID . '.png')
+            ->toMediaCollection('preview_image');
     }
 };
 ?>
@@ -55,7 +82,6 @@ new class extends Component implements HasForms {
     @volt
         <div class="max-w-7xl mx-auto">
             {{ $shortId }}
-            <x-schematic-renderer :base64="$schematicBase64" wire:key="schematic-renderer-{{ $shortId }}" />
             <form wire:submit="create">
                 {{ $this->form }}
 
