@@ -17,23 +17,14 @@ $deleteSchematic = function ($schematicId) {
 
 ?>
 
-<div>
+<div class="flex justify-center p-4">
     @volt
-        <div class="bg-base-100 rounded-lg shadow-lg flex flex-col">
-            <div class="p-4">
-                <h2 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-2">
-                    {{ $schematic->name }}
-                </h2>
-                <div class="flex flex-wrap justify-center">
-                    @foreach ($schematic->authors as $player)
-                        <img src="{{ $player->headUrl }}" alt="{{ $player->lastSeenName }}" class="w-8 h-8 rounded-full m-1">
-                    @endforeach
-                </div>
-                <p class="text-gray-500 dark:text-gray-400 mb-4 text-center">
-                    {!! $schematic->description !!}
-                </p>
-            </div>
-            <div class="flex-grow">
+        <div class="bg-base-300 rounded-lg shadow-lg flex flex-col lg:max-w-7xl mx-auto p-4">
+            <h2 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-2">
+                {{ $schematic->name }}
+            </h2>
+
+            <div class="flex-grow shadow-[inset_0_4px_4px_rgba(1,0,0,0.6)] rounded-lg bg-base-200">
                 <x-schematic-renderer :schematic="$schematic" />
             </div>
             <div class="flex justify-center p-4">
@@ -56,6 +47,17 @@ $deleteSchematic = function ($schematicId) {
                     @endif
                 @endauth
 
+            </div>
+            <div>
+                <div class="flex flex-wrap justify-center">
+                    @foreach ($schematic->authors as $player)
+                        <img src="{{ $player->headUrl }}" alt="{{ $player->lastSeenName }}"
+                            class="w-8 h-8 rounded-full m-1">
+                    @endforeach
+                </div>
+                <p class="text-gray-500 dark:text-gray-400 mb-4 text-center">
+                    {!! $schematic->description !!}
+                </p>
             </div>
         </div>
     @endvolt

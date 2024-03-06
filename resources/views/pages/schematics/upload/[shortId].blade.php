@@ -86,8 +86,14 @@ new class extends Component implements HasForms {
             <form wire:submit="create">
                 {{ $this->form }}
 
-                <button type="submit">
+
+                <button type="submit" wire:loading:hidden
+                    class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
                     Submit
+                </button>
+                <button wire:loading
+                    class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
+                    Submitting... <i class="fas fa-spinner animate-spin"></i>
                 </button>
             </form>
         </div>
