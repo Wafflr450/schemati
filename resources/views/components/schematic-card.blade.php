@@ -3,7 +3,7 @@
     <div class="w-full max-w-sm rounded-lg bg-base-100 shadow-lg">
         <div class="relative p-2">
             @if ($schematic->preview_video)
-                <video class="w-full h-48 object-cover rounded-lg bg-base-200 shadow-[0_4px_4px_rgba(1,0,0,0.6)]"
+                <video class="w-full h-48 object-cover rounded-lg bg-base-200 shadow-[inset_0_4px_4px_rgba(1,0,0,0.6)]"
                     src="{{ $schematic->preview_video }}" loop id="preview-video_{{ $schematic->id }}" muted></video>
             @elseif ($schematic->preview_image)
                 <img class="w-full h-48 object-cover rounded-lg shadow-[inset_0_4px_4px_rgba(1,0,0,0.6)] bg-base-200"

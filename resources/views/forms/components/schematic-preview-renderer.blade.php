@@ -1,13 +1,9 @@
-<div class="aspect-w-4 aspect-h-3 w-full min-h-96 relative justify-center items-center flex">
-    <canvas id="canvas-{{ $schematicId }}" wire:ignore class="w-full h-[50vh]">
-        Your browser does not support the HTML5 canvas tag.
-    </canvas>
-    <div class="absolute bottom-0 right-0 p-4">
-        <button type="button" x-data x-on:click="event.preventDefault(); generatePreview()"
-            class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
-            Generate Preview <i class="fas fa-camera"></i>
-        </button>
-
+<div class="static justify-center  flex justify-around content-around" x-data="{ state: $wire.$entangle('name') }">
+    <div class="w-2/3 mx-auto relative">
+        <canvas id="canvas-{{ $schematicId }}" wire:ignore
+            class="w-full h-[50vh] shadow-[inset_0_4px_4px_rgba(1,0,0,0.6)] bg-base-200 rounded-lg">
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
         <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none"
             style="display: none" id="progress-{{ $schematicId }}">
             <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] relative">
@@ -18,15 +14,41 @@
                 </div>
             </div>
         </div>
+        <div class="absolute bottom-0 right-0 p-4">
+            <button type="button" x-data x-on:click="event.preventDefault(); generatePreview()"
+                class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
+                Generate Preview <i class="fas fa-camera"></i>
+            </button>
+        </div>
     </div>
+    <div class="w-1/3 mx-auto">
 
-</div>
-<div class="w-48 h-48 bg-gray-200 rounded-t-lg " x-data="{ state: $wire.$entangle('name') }">
-    <div x-show="state.constructor === Object && state.png" <img class="w-full h-48 object-cover rounded-t-lg"
-        x-bind:src="state.png" alt="Preview">
-    </div>
-    <div x-show="state.constructor === Object && state.webm" <video class="w-full h-48 object-cover rounded-t-lg"
-        x-bind:src="state.webm" loop muted></video>
+        <div class="h-full">
+            <div class="h-1/2 flex items-center justify-center">
+                @if ($getState() && array_key_exists('png', $getState()))
+                    <img src="{{ $getState()['png'] }}" class="object-cover rounded-t-lg w-full h-full"
+                        alt="Preview" />
+                @else
+                    <div role="status" x-show="!state || !'png' in state"
+                        class="flex items-center justify-center h-56 max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700 w-full h-full">
+                        <i class="fas fa-camera text-4xl text-gray-500 dark:text-gray-400"></i>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                @endif
+            </div>
+            <div class="h-1/2 flex items-center justify-center">
+                @if ($getState() && array_key_exists('webm', $getState()))
+                    <video class="w-full h-full object-cover rounded-b-lg" src="{{ $getState()['webm'] }}" loop muted
+                        autoplay></video>
+                @else
+                    <div role="status" x-show="!state || !'webm' in state"
+                        class="flex items-center justify-center h-56 max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700 w-full h-full">
+                        <i class="fas fa-video text-4xl text-gray-500 dark:text-gray-400"></i>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 @pushOnce('scripts')
