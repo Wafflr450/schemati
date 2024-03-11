@@ -4,6 +4,8 @@ use function Livewire\Volt\{mount, state, computed};
 use App\Models\Schematic;
 use function Laravel\Folio\name;
 
+name('schematics.upload');
+
 state(['search'])->url();
 
 // TODO: Optimise and use full-text search

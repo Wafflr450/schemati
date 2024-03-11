@@ -21,13 +21,12 @@ class SchematicUpload extends Controller
         $cacheKey = "schematic-temporary:{$author}:{$schematicUUID}";
         $fileContents = file_get_contents($request->file('schematic'));
         Cache::put($cacheKey, $fileContents, now()->addHours(1));
-        $smallCacheKey = CommonUtils::smallHash($cacheKey);
+        $smallCacheKey = CommonUtils::smallHash($cacheKey, 6);
         Cache::put("schematic-temporary-short-links:{$smallCacheKey}", $cacheKey, now()->addHours(1));
         $link = route('index') . "/schematics/upload/{$smallCacheKey}";
         return response()->json(
             [
                 'link' => $link,
-                'qr' => CommonUtils::asciiQrCode($link),
             ],
             200,
         );

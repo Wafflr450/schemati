@@ -9,6 +9,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
+use App\Models\Player;
+use Illuminate\Support\Str;
 
 use App\Forms\Components\SchematicPreviewRenderer;
 use Livewire\Volt\Component;
@@ -39,6 +41,25 @@ new class extends Component implements HasForms {
         return static::getResource()::getUrl('index') . '/schematics/';
     }
 
+    public function messages(): array
+    {
+        return [
+            'data.schematicPreview.webm.required' => 'The schematic preview must include a webm file.',
+            'data.schematicPreview.png.required' => 'The schematic preview must include a png file.',
+        ];
+    }
+
+    public function rules(): array
+    {
+        return [
+            'data.title' => ['required'],
+            'data.description' => ['required'],
+            'data.schematicPreview' => ['required', 'array', 'size:2'],
+            'data.schematicPreview.webm' => ['required', 'string'],
+            'data.schematicPreview.png' => ['required', 'string'],
+        ];
+    }
+
     public function form(Form $form): Form
     {
         return $form
@@ -49,23 +70,29 @@ new class extends Component implements HasForms {
                         'schematicBase64' => $this->schematicBase64,
                         'schematicId' => $this->shortId,
                     ])
-                    ->required(),
-                RichEditor::make('content'),
-
-                // ...
+                    ->required()
+                    ->rules(['required', 'array', 'size:2']),
+                RichEditor::make('description')->required(),
             ])
             ->statePath('data');
     }
-    public function create(): void
+    public function create()
     {
+        $this->validate();
         $schematicUUID = Str::uuid();
         $authors = explode(',', $this->author);
         $schematic = new Schematic([
             'id' => $schematicUUID,
             'name' => $this->data['title'],
-            'description' => $this->data['content'],
+            'description' => $this->data['description'],
         ]);
         $schematic->save();
+        foreach ($authors as $author) {
+            $player = Player::firstOrCreate(['id' => $author]);
+            if ($player) {
+                $schematic->authors()->attach($player);
+            }
+        }
         $schematic = Schematic::find($schematicUUID);
         $schematic
             ->addMediaFromBase64($this->schematicBase64)
@@ -101,7 +128,7 @@ new class extends Component implements HasForms {
                             </span>
                         </div>
                         <div>
-                            <button type="submit" wire:loading:remove
+                            <button type="submit" wire:loading.remove
                                 class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
                                 Submit
                             </button>

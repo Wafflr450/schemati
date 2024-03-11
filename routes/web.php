@@ -20,6 +20,8 @@ Route::get('/', function () {
     return view('welcome');
 })->name('index');
 
+//short link for schematics/upload/{shortId}
+
 Route::get('/auth/azure', function () {
     $minecraftUser = Socialite::driver('minecraft')->user();
     $user = User::updateOrCreate([

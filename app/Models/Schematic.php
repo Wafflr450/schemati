@@ -28,9 +28,14 @@ class Schematic extends Model implements HasMedia
     {
         static::creating(function ($schematic) {
             if (empty($schematic->id)) {
-                dd('creating schematic');
                 $schematic->id = Str::uuid();
             }
+        });
+
+        static::deleting(function ($schematic) {
+            $schematic->clearMediaCollection('schematics');
+            $schematic->clearMediaCollection('preview_video');
+            $schematic->clearMediaCollection('preview_image');
         });
     }
 
@@ -43,6 +48,9 @@ class Schematic extends Model implements HasMedia
     public function getFileAttribute()
     {
         $media = $this->getFirstMedia('schematic');
+        if (!$media) {
+            return null;
+        }
         $disk = $media->disk;
         $fileName = $media->file_name;
         $model_id = $media->model_id;

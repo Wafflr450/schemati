@@ -6,6 +6,7 @@ use App\Helpers\JWT;
 
 use App\Http\Controllers\Schematic\SchematicCreate;
 use App\Http\Controllers\Schematic\SchematicUpload;
+use App\Models\Schematic;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,15 +37,16 @@ Route::prefix('v1')->group(function () {
         Route::post('/schematic-upload', SchematicUpload::class);
     });
     Route::get('/download-schematic/{id}', function (Request $request, $id) {
-        $schematic = \App\Models\Schematic::find($id);
+        $schematic = Schematic::find($id);
+
         if (!$schematic) {
-            return response()->json(['message' => 'Schematic not found'], 404);
+            return response()->json(['error' => 'Schematic not found'], 404);
         }
-        $downloadPath = $schematic->downloadLink;
-        $fileName = $schematic->name . '.schem';
-        $headers = [
-            'Content-Type' => 'application/octet-stream',
-        ];
-        return \Response::make(Storage::disk('schematics')->get('schematics/' . $schematic->id . '.schem'), 200, $headers);
+
+        $file = $schematic->file;
+
+        return response($file)
+            ->header('Content-Type', 'application/octet-stream')
+            ->header('Content-Disposition', 'attachment; filename="' . $schematic->name . '.schematic"');
     });
 });

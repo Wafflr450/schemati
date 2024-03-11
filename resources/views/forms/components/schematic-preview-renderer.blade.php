@@ -1,4 +1,4 @@
-<div class="static justify-center  flex justify-around content-around" x-data="{ state: $wire.$entangle('name') }">
+<div class="static justify-center flex justify-around content-around" x-data="{ state: $wire.$entangle('name') }">
     <div class="w-2/3 mx-auto relative">
         <canvas id="canvas-{{ $schematicId }}" wire:ignore
             class="w-full h-[50vh] shadow-[inset_0_4px_4px_rgba(1,0,0,0.6)] bg-base-200 rounded-lg">
@@ -15,14 +15,13 @@
             </div>
         </div>
         <div class="absolute bottom-0 right-0 p-4">
-            <button type="button" x-data x-on:click="event.preventDefault(); generatePreview()"
+            <button type="button" x-on:click="window.generatePreview_{{ $schematicId }}()"
                 class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
                 Generate Preview <i class="fas fa-camera"></i>
             </button>
         </div>
     </div>
     <div class="w-1/3 mx-auto">
-
         <div class="h-full">
             <div class="h-1/2 flex items-center justify-center">
                 @if ($getState() && array_key_exists('png', $getState()))
@@ -51,8 +50,9 @@
         </div>
     </div>
 </div>
+
 @pushOnce('scripts')
-    <script type="module">
+    <script type="module" defer>
         function setCanvasDimensions(canvasId) {
             const canvas = document.getElementById(canvasId);
             const container = canvas.parentElement;
@@ -70,15 +70,6 @@
             progress.style = 'display: none';
         }
 
-        function toggleProgress(progressId) {
-            const progress = document.getElementById(progressId);
-            if (progress.style.display === 'none') {
-                showProgress(progressId);
-            } else {
-                hideProgress(progressId);
-            }
-        }
-
         function setProgress(progressId, progress) {
             const progressElement = document.querySelector(`#${progressId} > div > .progress-value`);
             progressElement.style.width = `${progress}%`;
@@ -89,8 +80,8 @@
             progressElement.textContent = text;
         }
 
-        setCanvasDimensions('canvas-{{ $schematicId }}');
         window.addEventListener('resize', () => setCanvasDimensions('canvas-{{ $schematicId }}'));
+        setCanvasDimensions('canvas-{{ $schematicId }}');
         const schematic_{{ $schematicId }} = @json($schematicBase64);
         const canvas_{{ $schematicId }} = document.getElementById('canvas-{{ $schematicId }}');
         const options = {
@@ -108,26 +99,21 @@
             options
         );
 
-        window.generatePreview = function() {
-
+        window.generatePreview_{{ $schematicId }} = async function() {
             const resolutionX = 720;
             const resolutionY = 480;
             const frameRate = 24;
             const duration = 5;
             const rotation = 360;
 
-
-            renderer_{{ $schematicId }}.takeRotationWebM(resolutionX, resolutionY, frameRate, duration, rotation)
-                .then(webm => {
-                    return renderer_{{ $schematicId }}.takeScreenshot(resolutionX, resolutionY)
-                        .then(png => {
-                            console.log("Preview generated");
-                            @this.set('{{ $getStatePath() }}', {
-                                webm: webm,
-                                png: png
-                            });
-                        });
-                });
+            const webm = await renderer_{{ $schematicId }}.takeRotationWebM(resolutionX, resolutionY, frameRate,
+                duration, rotation);
+            const png = await renderer_{{ $schematicId }}.takeScreenshot(resolutionX, resolutionY);
+            console.log("Preview generated");
+            @this.set('{{ $getStatePath() }}', {
+                webm: webm,
+                png: png
+            });
         }
     </script>
-@endpushOnce
+@endPushOnce

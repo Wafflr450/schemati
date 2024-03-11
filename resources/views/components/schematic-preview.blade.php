@@ -7,11 +7,11 @@ state(['schematic' => fn() => $schematic]);
 
 $deleteSchematic = function ($schematicId) {
     $schematic = \App\Models\Schematic::find($schematicId);
-    if (!$schrematic) {
+    if (!$schematic) {
         return;
     }
     $schematic->delete();
-    //redirect to the schematics page
+
     $this->redirect('/schematics');
 };
 
@@ -33,19 +33,27 @@ $deleteSchematic = function ($schematicId) {
                     /download {{ $schematic->id }}
                 </p>
             </div>
+
             <div class="flex justify-center p-4">
                 <a href="{{ $schematic->downloadLink }}" target="_blank"
                     class="text-blue-700 dark:text-white hover:underline">
                     Download <i class="fas fa-download text-green-700"></i>
                 </a>
-                @auth
-                    @if ($schematic->authors->contains(auth()->user()->player->id))
-                        <button wire:click="deleteSchematic('{{ $schematic->id }}')" class="ml-4 text-red-700 dark:text-white">
-                            Delete <i class="fas fa-trash text-red-700"></i>
+                <h1>
 
-                        </button>
-                    @endif
-                @endauth
+                    <button wire:click="deleteSchematic('{{ $schematic->id }}')" class="ml-4 text-red-700 dark:text-white">
+                        Delete <i class="fas fa-trash text-red-700"></i>
+
+                    </button>
+                    @auth
+                        @if ($schematic->authors->contains(Auth::user()->uuid))
+                            <button wire:click="deleteSchematic('{{ $schematic->id }}')"
+                                class="ml-4 text-red-700 dark:text-white">
+                                Delete <i class="fas fa-trash text-red-700"></i>
+
+                            </button>
+                        @endif
+                    @endauth
 
             </div>
             <div>
