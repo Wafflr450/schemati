@@ -17,4 +17,8 @@ class JWT
 
         return FirebaseJWT::encode($dummyPayload, config('app.jwt_secret'), 'HS256');
     }
-}
+
+    public static function getToken($payload)
+    {
+        return FirebaseJWT::encode($payload, config('app.jwt_secret'), 'HS256');
+    }

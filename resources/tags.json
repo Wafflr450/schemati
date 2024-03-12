@@ -1,0 +1,174 @@
+[
+    {
+        "name": "minecraft",
+        "description": "Minecraft tag",
+        "children": [
+            {
+                "name": "redstone",
+                "description": "Redstone tag",
+                "children": [
+                    {
+                        "name": "logic",
+                        "description": "Logic tag",
+                        "children": [
+                            {
+                                "name": "computational",
+                                "description": "Computational tag",
+                                "children": [
+                                    {
+                                        "name": "arithmetics",
+                                        "description": "Arithmetics tag",
+                                        "children": [
+                                            {
+                                                "name": "addition",
+                                                "description": "Addition tag"
+                                            },
+                                            {
+                                                "name": "subtraction",
+                                                "description": "Subtraction tag"
+                                            },
+                                            {
+                                                "name": "multiplication",
+                                                "description": "Multiplication tag"
+                                            },
+                                            {
+                                                "name": "division",
+                                                "description": "Division tag"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "boolean",
+                                        "description": "Logic tag",
+                                        "children": [
+                                            {
+                                                "name": "and",
+                                                "description": "And tag"
+                                            },
+                                            {
+                                                "name": "or",
+                                                "description": "Or tag"
+                                            },
+                                            {
+                                                "name": "xor",
+                                                "description": "Xor tag"
+                                            },
+                                            {
+                                                "name": "not",
+                                                "description": "Not tag"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "name": "memory",
+                                        "description": "Memory tag",
+                                        "children": [
+                                            {
+                                                "name": "flip-flop",
+                                                "description": "Flip-flop tag"
+                                            },
+                                            {
+                                                "name": "latch",
+                                                "description": "Latch tag"
+                                            },
+                                            {
+                                                "name": "register",
+                                                "description": "Register tag"
+                                            },
+                                            {
+                                                "name": "cache",
+                                                "description": "Cache tag"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "mechanical",
+                        "description": "Mechanical tag",
+                        "children": [
+                            {
+                                "name": "door",
+                                "description": "Door tag",
+                                "children": [
+                                    {
+                                        "name": "hipster",
+                                        "description": "Hipster tag"
+                                    },
+                                    {
+                                        "name": "vertical",
+                                        "description": "Vertical tag"
+                                    },
+                                    {
+                                        "name": "trapdoor",
+                                        "description": "Trapdoor tag"
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "piston",
+                                "description": "Piston tag",
+                                "children": [
+                                    {
+                                        "name": "monostable",
+                                        "description": "Monostable tag"
+                                    },
+                                    {
+                                        "name": "bistable",
+                                        "description": "Bistable tag"
+                                    },
+                                    {
+                                        "name": "tristable",
+                                        "description": "Tristable tag"
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "elevator",
+                                "description": "Elevator tag"
+                            },
+                            {
+                                "name": "bridge",
+                                "description": "Bridge tag"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "farm",
+                        "description": "Farm tag"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "ore",
+        "description": "Ore Minecraft Server tag",
+        "children": [
+            {
+                "name": "survival",
+                "description": "Survival tag"
+            },
+            {
+                "name": "creative",
+                "description": "Creative tag"
+            },
+            {
+                "name": "pol",
+                "description": "Plot of Logic tag",
+                "children": [
+                    {
+                        "name": "approved",
+                        "description": "Approved tag"
+                    },
+                    {
+                        "name": "unapproved",
+                        "description": "Unapproved tag"
+                    }
+                ]
+            }
+        ]
+    }
+]

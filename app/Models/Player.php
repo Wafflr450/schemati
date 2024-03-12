@@ -19,6 +19,7 @@ class Player extends Model
     ];
 
     protected $keyType = 'string';
+    public $incrementing = false;
 
     public static function booted()
     {

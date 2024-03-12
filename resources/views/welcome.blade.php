@@ -22,7 +22,7 @@
                 <x-inputs.buttons.cta href="/schematics" content="View Schematics" />
             </div>
 
-
+            <x-tag-tree />
 
         </div>
     </section>

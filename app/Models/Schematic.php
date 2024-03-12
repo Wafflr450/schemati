@@ -23,6 +23,7 @@ class Schematic extends Model implements HasMedia
     ];
 
     protected $keyType = 'string';
+    public $incrementing = false;
 
     public static function booted()
     {
