@@ -16,7 +16,7 @@
     <!-- Scripts -->
     {{--  <script defer src="http://localhost:3000/bundle.js" wire:ignore></script>  --}}
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/echo.js'])
     <script src="/js/bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
@@ -48,6 +48,14 @@
 
     @stack('modals')
     <script src="https://kit.fontawesome.com/3287ce58d5.js" crossorigin="anonymous"></script>
+    <script type='module'>
+        console.log("Hello from app.blade.php");
+        Echo.join('reverb')
+            .listen('ToastEvent', (e) => {
+                console.log(e.message.type, e.message.message, e.message.title);
+                Toast[e.message.type](e.message.message, e.message.title);
+            });
+    </script>
     <script>
         async function openDatabase() {
             return new Promise((resolve, reject) => {
