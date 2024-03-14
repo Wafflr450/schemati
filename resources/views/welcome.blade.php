@@ -4,9 +4,6 @@
     <section class="bg-base-100">
         <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
             {{--  <x-animated-logo class="w-auto h-48 mx-auto mb-8" />  --}}
-            <h1>
-                LARAVEL VERSION: {{ Illuminate\Foundation\Application::VERSION }}
-            </h1>
             <div class="flex items-center justify-center mb-8">
                 <x-animated-logo-svg class="flex items-center justify-center w-32  rounded-full bg-primary-500" />
             </div>
@@ -24,7 +21,7 @@
                 <x-inputs.buttons.cta href="/schematics" content="View Schematics" />
             </div>
 
-            <x-tag-tree />
+            {{--  <x-tag-tree />  --}}
 
         </div>
     </section>
