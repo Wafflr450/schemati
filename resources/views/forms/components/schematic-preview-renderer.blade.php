@@ -1,4 +1,4 @@
-<div class="static justify-center flex justify-around content-around" x-data="{ state: $wire.$entangle('name') }">
+<div class="static justify-center flex justify-around content-around" x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
     <div class="w-2/3 mx-auto relative">
         <canvas id="canvas-{{ $schematicId }}" wire:ignore
             class="w-full h-[50vh] shadow-[inset_0_4px_4px_rgba(1,0,0,0.6)] bg-base-200 rounded-lg">

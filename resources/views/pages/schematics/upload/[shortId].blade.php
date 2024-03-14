@@ -31,6 +31,13 @@ new class extends Component implements HasForms {
             $this->redirect('/schematics');
         }
         $author = explode(':', $cacheKey)[1];
+        if ($author) {
+            $this->author = $author;
+            info('Author is set to: ' . $author);
+        } else {
+            //redirect to schematics since the author is not set
+            $this->redirect('/schematics');
+        }
         $schematicFile = Cache::get($cacheKey);
         $this->schematicBase64 = base64_encode($schematicFile);
         $this->form->fill();
@@ -81,11 +88,15 @@ new class extends Component implements HasForms {
         $this->validate();
         $schematicUUID = Str::uuid();
         $authors = explode(',', $this->author);
+        info($authors);
+        info('Creating schematic...');
+
         $schematic = new Schematic([
             'id' => $schematicUUID,
             'name' => $this->data['title'],
             'description' => $this->data['description'],
         ]);
+        info('Created schematic with id: ' . $schematicUUID);
         $schematic->save();
         foreach ($authors as $author) {
             $player = Player::firstOrCreate(['id' => $author]);
