@@ -22,3 +22,4 @@ class JWT
     {
         return FirebaseJWT::encode($payload, config('app.jwt_secret'), 'HS256');
     }
+}
