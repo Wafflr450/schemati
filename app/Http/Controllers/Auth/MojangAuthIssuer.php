@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Helpers\JWT;
-use GuzzleHttp\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\MojangAuthIssuerRequest;
+use Illuminate\Support\Facades\Http;
 
 class MojangAuthIssuer extends Controller
 {
@@ -14,24 +14,21 @@ class MojangAuthIssuer extends Controller
      */
     public function __invoke(MojangAuthIssuerRequest $request)
     {
-        $client = new Client();
-        $response = $client->get("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={$request->username}&serverId={$request->serverId}");
+        $response = Http::get("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={$request->username}&serverId={$request->serverId}");
 
-        if ($response->getStatusCode() !== 200) {
+        if (!$response->ok()) {
             return response()->json(
                 [
-                    'error' => 'Mojang API returned an error',
+                    'error' => 'Invalid username or serverId',
                 ],
                 401
             );
         }
 
-        $result = json_decode($response->getBody(), true);
-
         return response()->json([
             'token' => JWT::getToken([
-                'username' => $result['name'],
-                'uuid' => $result['id'],
+                'username' => $response['name'],
+                'uuid' => $response['id'],
             ])
         ], 200);
     }
