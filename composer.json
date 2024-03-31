@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "dedoc/scramble": "^0.9.0",
         "doctrine/dbal": "^3.5.1",
         "filament/filament": "^3.2",
         "filament/forms": "^3.2",
@@ -23,7 +24,7 @@
         "laravel/socialite": "^5.12",
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.24",
-        "livewire/livewire": "^3.0",
+        "livewire/livewire": "3.4.9",
         "livewire/volt": "^1.6",
         "socialiteproviders/microsoft": "^4.2",
         "socialiteproviders/microsoft-azure": "^5.1",

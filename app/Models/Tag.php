@@ -96,18 +96,13 @@ class Tag extends Model implements HasMedia
         return $this->viewers->contains($player) || $this->canUse($player) || $canChildrenSee;
     }
 
-    public function getTokenForPlayer($player)
+    public static function getRoot()
     {
-        if (!$this->canAdmin($player)) {
-            throw new \Exception('Player does not have permission to get token for this tag');
-        }
-        $payload = [
-            'iss' => 'http://localhost',
-            'iat' => time(),
-            'token_isssuer' => $player->id,
-            'tag_id' => $this->id,
-            'tag_name' => $this->name,
-        ];
-        return JWT::getToken($payload);
+        return Tag::whereNull('parent_id')->first();
+    }
+
+    public static function getTree()
+    {
+        return Tag::getRoot()->getNodeWithChildren();
     }
 }

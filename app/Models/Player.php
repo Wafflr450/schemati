@@ -25,10 +25,9 @@ class Player extends Model
     {
         static::creating(function ($player) {
             if (!Arr::has($player, 'last_seen_name')) {
-                try {
-                    $player->last_seen_name = MinecraftAPI::getUsername($player->id);
-                } catch (\Exception $e) {
-                }
+                $player->last_seen_name = MinecraftAPI::getUsername($player->id);
+            } elseif (!Arr::has($player, 'id')) {
+                $player->id = MinecraftAPI::getUUID($player->last_seen_name);
             }
         });
     }
