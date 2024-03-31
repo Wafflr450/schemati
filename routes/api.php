@@ -7,6 +7,9 @@ use App\Helpers\JWT;
 use App\Http\Controllers\Schematic\SchematicCreate;
 use App\Http\Controllers\Schematic\SchematicUpload;
 use App\Models\Schematic;
+
+use App\Http\Controllers\Auth\MojangAuthIssuer;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,6 +39,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/schematic', SchematicCreate::class);
         Route::post('/schematic-upload', SchematicUpload::class);
     });
+    Route::post('/authorize-mojang', MojangAuthIssuer::class);
     Route::get('/download-schematic/{id}', function (Request $request, $id) {
         $schematic = Schematic::find($id);
 
