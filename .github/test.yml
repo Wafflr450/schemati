@@ -1,0 +1,23 @@
+name: Test Vault Secret Loading
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test_vault_secret:
+    name: Test Vault Secret
+    runs-on: ubuntu-latest
+    env:
+      DOTENV_KEY: ${{ secrets.DOTENV_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Load secret from Vault
+        run: |
+          npm install dotenv-vault
+          echo "TEST_KEY=$(node -e "require('dotenv-vault').config({ key: '${{ env.DOTENV_KEY }}' }); console.log(process.env.TEST_KEY)")" >> $GITHUB_ENV
+
+      - name: Echo test key
+        run: echo "Test key from Vault: ${{ env.TEST_KEY }}"
