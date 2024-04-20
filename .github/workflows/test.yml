@@ -18,6 +18,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Load secret from Vault
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
         run: |
           npm install dotenv-vault
           echo "TEST_KEY=$(node -e "require('dotenv-vault').config({ key: '${{ env.DOTENV_KEY }}' }); console.log(process.env.TEST_KEY)")" >> $GITHUB_ENV
