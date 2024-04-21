@@ -29,4 +29,4 @@ jobs:
 
       - name: Echo test key
         run: |
-          echo "Test key from Vault: ${{ env.TEST_KEY }}"
+          echo $TEST_KEY
