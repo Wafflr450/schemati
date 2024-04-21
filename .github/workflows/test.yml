@@ -2,31 +2,39 @@ name: Test Vault Secret Loading
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - k8s
 
 jobs:
   test_vault_secret:
     name: Test Vault Secret
     runs-on: ubuntu-latest
-    env:
-      DOTENV_KEY: ${{ secrets.DOTENV_KEY }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "16"
+          node-version: "18"
 
       - name: Load secrets from Vault
+        env:
+          DOTENV_ME: ${{ secrets.DOTENV_ME }}
         run: |
-          npm install dotenv-vault
-          echo "TEST_KEY=$(node -e \"require('dotenv-vault').config({ key: '${{ env.DOTENV_KEY }}' }); console.log(process.env.TEST_KEY)\")" >> $GITHUB_ENV
+          npm install -g dotenv-vault
+          dotenv-vault pull ci --dotenvMe=$DOTENV_ME --yes
+
+      - name: Move .env.ci to .env
+        run: mv .env.ci .env
+
+      - name: Load secrets into environment variables
+        run: |
+          while read line; do
+            if [[ $line == *"="* ]]; then
+              export $line
+            fi
+          done < .env
 
       - name: Echo test key
         run: |
-          echo "Test key from Vault: ${{ env.TEST_KEY }}"
+          echo "Test key from Vault: $TEST_KEY"
