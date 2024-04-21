@@ -2,7 +2,7 @@ name: Test Vault Secret Loading
 
 on:
   workflow_dispatch:
-    push:
+  push:
     branches:
       - k8s
 
