@@ -2,6 +2,9 @@ name: Test Vault Secret Loading
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - k8s
 
 jobs:
   test_vault_secret:
@@ -13,6 +16,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
 
       - name: Load secrets from Vault
         run: |
