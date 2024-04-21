@@ -29,4 +29,4 @@ jobs:
 
       - name: Echo test key
         run: |
-          echo $TEST_KEY
+          echo "$TEST_KEY"
