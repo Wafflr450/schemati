@@ -22,10 +22,10 @@ jobs:
 
       - name: Load secrets from Vault
         env:
-          DOTENV_ME: ${{ secrets.DOTENV_ME }}
+          DOTENV_KEY: ${{ secrets.DOTENV_KEY  }}
         run: |
           npm install -g dotenv-vault
-          dotenv-vault pull ci --dotenvMe=$DOTENV_ME --yes
+          dotenv-vault pull ci --dotenvMe=$DOTENV_KEY  --yes
 
       - name: Move .env.ci to .env
         run: mv .env.ci .env
