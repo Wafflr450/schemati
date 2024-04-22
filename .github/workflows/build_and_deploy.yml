@@ -16,7 +16,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       KUBE_NAMESPACE: staging
-      IMAGE_NAME: rg.fr-par.scw.cloud/redcraft/redcraft-website
+      IMAGE_NAME: rg.fr-par.scw.cloud/schematio/schematio-website
       GENERIC_IMAGE_TAG: staging
 
     steps:
