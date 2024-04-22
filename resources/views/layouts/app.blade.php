@@ -49,7 +49,6 @@
     @stack('modals')
     <script src="https://kit.fontawesome.com/3287ce58d5.js" crossorigin="anonymous"></script>
     <script type='module'>
-        console.log("Hello from app.blade.php");
         Echo.join('reverb')
             .listen('ToastEvent', (e) => {
                 console.log(e.message.type, e.message.message, e.message.title);
