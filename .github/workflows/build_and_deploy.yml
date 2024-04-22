@@ -59,7 +59,7 @@ jobs:
       - name: Generate CSS files
         run: |
           npm install
-          npm run production
+          npm run build
 
       - name: Build & push Docker image
         env:
