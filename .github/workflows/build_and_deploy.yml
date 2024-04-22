@@ -12,9 +12,11 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     env:
-      DOTENV_KEY: ${{ secrets.DOTENV_KEY }}
+      KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       KUBE_NAMESPACE: staging
-      IMAGE_NAME: rg.fr-par.scw.cloud/schematio/schematio-website
+      IMAGE_NAME: rg.fr-par.scw.cloud/redcraft/redcraft-website
       GENERIC_IMAGE_TAG: staging
 
     steps:
@@ -37,13 +39,6 @@ jobs:
         run: |
           echo "KUBE_NAMESPACE=staging" >> $GITHUB_ENV
           echo "GENERIC_IMAGE_TAG=staging" >> $GITHUB_ENV
-
-      - name: Load secrets from Vault
-        run: |
-          npm install dotenv-vault
-          echo "KUBE_CONFIG_DATA=$(node -e "require('dotenv-vault').config({ key: '${{ env.DOTENV_KEY }}' }); console.log(process.env.KUBE_CONFIG_DATA)")" >> $GITHUB_ENV
-          echo "AWS_ACCESS_KEY_ID=$(node -e "require('dotenv-vault').config({ key: '${{ env.DOTENV_KEY }}' }); console.log(process.env.AWS_ACCESS_KEY_ID)")" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=$(node -e "require('dotenv-vault').config({ key: '${{ env.DOTENV_KEY }}' }); console.log(process.env.AWS_SECRET_ACCESS_KEY)")" >> $GITHUB_ENV
 
       - name: Login to Container Registry
         run: docker login rg.fr-par.scw.cloud/schematio -u nologin -p "$AWS_SECRET_ACCESS_KEY"
