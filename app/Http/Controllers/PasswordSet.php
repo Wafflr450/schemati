@@ -14,7 +14,7 @@ class PasswordSet extends Controller
     public function __invoke(PasswordSetRequest $request)
     {
         $user = User::firstOrCreate([
-            'uuid' => $request->uuid,
+            'uuid' => $request->player_uuid,
         ]);
         $user->password = Hash::make($request->password);
         $user->save();

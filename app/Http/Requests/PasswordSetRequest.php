@@ -27,7 +27,7 @@ class PasswordSetRequest extends FormRequest
     {
         //needs a uuid and a password
         return [
-            'uuid' => ['required', 'string', new MinecraftPlayerUUID()],
+            'player_uuid' => ['required', 'string', new MinecraftPlayerUUID()],
             'password' => 'required|string|min:10',
         ];
     }
@@ -35,9 +35,9 @@ class PasswordSetRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'uuid.required' => 'A UUID is required',
-            'uuid.string' => 'The UUID must be a string',
-            'uuid.uuid' => 'The UUID must be a valid UUID',
+            'player_uuid.required' => 'A UUID is required',
+            'player_uuid.string' => 'The UUID must be a string',
+            'player_uuid.uuid' => 'The UUID must be a valid UUID',
             'password.required' => 'A password is required',
             'password.string' => 'The password must be a string',
             'password.min' => 'The password must be at least 10 characters',
