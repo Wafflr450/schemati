@@ -15,4 +15,9 @@ class CommonUtils
     {
         return substr(md5($input), 0, $length);
     }
+
+    public static function randomString(int $length = 8): string
+    {
+        return substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', $length)), 0, $length);
+    }
 }

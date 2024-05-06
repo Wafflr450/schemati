@@ -2,9 +2,8 @@
     <svg viewBox="410.51 306.79 408.25 364.77" xmlns="http://www.w3.org/2000/svg" fill="url(#grad1)" stroke="#000">
         <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#9333ea;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#d946ef;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#e879f9;stop-opacity:1" />
+                <stop offset="0%" style="stop-color:#c125d3;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
             </linearGradient>
             <filter id="inset-shadow" x="-50%" y="-50%" width="200%" height="200%">
                 <feComponentTransfer in="SourceAlpha">

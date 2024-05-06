@@ -9,7 +9,8 @@
             </div>
             <h1 id="hero-animated-h1"
                 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-shadow-lg">
-                Welcome to schem.at
+                Welcome to schemat.<span
+                    class="bg-gradient-to-r from-fuchsia-600 to-pink-500 bg-clip-text text-transparent">io</span>
             </h1>
             <p id="hero-animated-subtitle"
                 class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">Here at
