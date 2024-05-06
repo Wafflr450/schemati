@@ -4,7 +4,7 @@ use function Livewire\Volt\{mount, state, computed};
 use App\Models\Schematic;
 use function Laravel\Folio\name;
 
-name('schematics.upload');
+name('schematics');
 
 state(['search'])->url();
 

@@ -34,9 +34,11 @@ class Schematic extends Model implements HasMedia
         });
 
         static::deleting(function ($schematic) {
+            info('deleting');
             $schematic->clearMediaCollection('schematics');
             $schematic->clearMediaCollection('preview_video');
             $schematic->clearMediaCollection('preview_image');
+            info('deleted');
         });
     }
 

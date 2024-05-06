@@ -27,16 +27,20 @@ new class extends Component implements HasForms {
     public function mount($shortId)
     {
         $cacheKey = Cache::get("schematic-temporary-short-links:{$shortId}");
-        if (!$cacheKey || strlen($cacheKey) === 0) {
+        if ($cacheKey == null || strlen($cacheKey) === 0) {
+            session()->flash('error', 'The schematic you are trying to upload is not valid.');
             $this->redirect('/schematics');
+            return;
         }
+
         $author = explode(':', $cacheKey)[1];
         if ($author) {
             $this->author = $author;
             info('Author is set to: ' . $author);
         } else {
-            //redirect to schematics since the author is not set
+            session()->flash('error', 'The schematic you are trying to upload is not valid.');
             $this->redirect('/schematics');
+            return;
         }
         $schematicFile = Cache::get($cacheKey);
         $this->schematicBase64 = base64_encode($schematicFile);
@@ -88,8 +92,6 @@ new class extends Component implements HasForms {
         $this->validate();
         $schematicUUID = Str::uuid();
         $authors = explode(',', $this->author);
-        info($authors);
-        info('Creating schematic...');
 
         try {
             $schematic = new Schematic([
@@ -97,7 +99,6 @@ new class extends Component implements HasForms {
                 'name' => $this->data['title'],
                 'description' => $this->data['description'],
             ]);
-            info('Created schematic with id: ' . $schematicUUID);
             $schematic->save();
 
             foreach ($authors as $author) {
@@ -126,12 +127,16 @@ new class extends Component implements HasForms {
                 $schematic->authors()->detach();
                 $schematic->delete();
             }
-
             $schematic->clearMediaCollection('schematic');
             $schematic->clearMediaCollection('preview_video');
             $schematic->clearMediaCollection('preview_image');
             throw $e;
         }
+        $cacheKey = Cache::get("schematic-temporary-short-links:{$this->shortId}");
+        Cache::forget("schematic-temporary-short-links:{$this->shortId}");
+        Cache::forget($cacheKey);
+        session()->flash('success', 'Schematic uploaded successfully.');
+        $this->redirect('/schematics');
     }
 };
 ?>

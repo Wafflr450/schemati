@@ -27,7 +27,9 @@
 
 <body class="font-sans antialiased">
     <livewire:toasts />
+
     <x-banner />
+
 
     <div class="min-h-screen bg-base-100">
         @livewire('navigation-menu')
@@ -46,7 +48,14 @@
         </main>
     </div>
 
+
     @stack('modals')
+
+
+
+
+
+
     <script src="https://kit.fontawesome.com/3287ce58d5.js" crossorigin="anonymous"></script>
     <script type='module'>
         Echo.join('reverb')
@@ -155,6 +164,18 @@
             document.body.removeChild(input);
             Toast.success("Copied to clipboard!");
         }
+    </script>
+    <script>
+        @if (session('error'))
+            setTimeout(() => {
+                Toast.danger("{{ session('error') }}");
+            }, 100);
+        @endif
+        @if (session('success'))
+            setTimeout(() => {
+                Toast.success("{{ session('success') }}");
+            }, 100);
+        @endif
     </script>
     <script>
         const konamiCode = [
