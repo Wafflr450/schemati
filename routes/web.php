@@ -38,12 +38,6 @@ Route::get('/', function () {
 //        ->redirect();
 //})->name('login-minecraft');
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return redirect()->route('index');
-    })->name('dashboard');
-});
-
 Route::get('/schematics/gif.worker.js', function () {
     $content = Cache::rememberForever('gif.worker.js', function () {
         $cdnUrl = 'https://cdn.jsdelivr.net/npm/gif.js/dist/gif.worker.js';

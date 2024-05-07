@@ -18,7 +18,7 @@
 <nav
     class=" px-2 sm:px-4 py-2.5  shadow-pink-500 shadow-[inset 0px 0px 0px 2px] backdrop-blur-xl border-b border-neutral-950">
     <div class="flex flex-wrap justify-between items-center">
-        <a href="{{ route('dashboard') }}" class="flex items-center">
+        <a href="{{ route('index') }}" class="flex items-center">
             <x-animated-logo-svg class="flex items-center justify-center w-8" />
         </a>
         <div class="flex md:order-2">
