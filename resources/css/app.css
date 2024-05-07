@@ -22,3 +22,15 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+.scroll-animation {
+    opacity: 0;
+    transform: translateY(20px);
+    transition-property: opacity, transform;
+    transition-timing-function: ease-out;
+}
+
+.scroll-animation.animate {
+    opacity: 1;
+    transform: translateY(0);
+}

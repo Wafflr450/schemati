@@ -1,32 +1,43 @@
-@php
-    $uuid = Str::uuid();
-@endphp
+<!-- resources/views/components/button/cta.blade.php -->
 
-<a href="{{ $href }}" wire:navigate.hover id="hero-cta-{{ $uuid }}"
-    class="focus:ring-pink-300 focus:ring-pink-800  relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 active:bg-pink-600 active:text-white transition-all ease-in duration-75 active:scale-95">
+@props([
+    'href' => '',
+    'color' => 'primary',
+    'content' => '',
+])
+
+<a href="{{ $href }}"
+    {{ $attributes->merge([
+        'class' =>
+            ' bg-gradient-to-r  relative inline-flex items-center justify-center px-8 py-3 text-lg font-semibold text-white rounded-full shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 active:translate-y-0 active:scale-100 ' .
+            UiUtils::getGradientClasses($color),
+    ]) }}>
+    <span class="relative z-10">{{ $content }}</span>
     <span
-        class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-base-100 rounded-md group-hover:bg-opacity-0 flex items-center justify-center">
-        {{ $content }}
-        <i id="animated-arrow-{{ $uuid }}" class="fas fa-arrow-right pl-2"></i>
-    </span>
+        class="absolute inset-0 bg-gradient-to-r from-transparent to-white opacity-20 animate-pulse rounded-full"></span>
+    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+            clip-rule="evenodd"></path>
+    </svg>
 </a>
 
-@push('scripts')
-    <script>
-        //make the arrow animate on hover
-        document.getElementById('hero-cta-{{ $uuid }}').addEventListener('mouseenter', function() {
-            gsap.to("#animated-arrow-{{ $uuid }}", {
-                x: 10,
-                duration: 0.5,
-                ease: "back",
-            });
-        });
-        document.getElementById('hero-cta-{{ $uuid }}').addEventListener('mouseleave', function() {
-            gsap.to("#animated-arrow-{{ $uuid }}", {
-                x: 0,
-                duration: 0.5,
-                ease: "back",
-            });
-        });
-    </script>
+@push('styles')
+    <style>
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+    </style>
 @endpush

@@ -8,7 +8,7 @@ class UiUtils
         'primary' => 'from-primary-600 to-secondary-500',
         'secondary' => 'from-secondary-600 to-secondary-400',
         'accent' => 'from-accent-600 to-accent-400',
-        'neutral' => 'from-neutral-950 to-neutral-800',
+        'neutral' => 'from-neutral-900 to-neutral-800',
         'base' => 'from-base-950 to-base-800',
         'info' => 'from-info-600 to-info-400',
         'success' => 'from-success-600 to-success-400',

@@ -64,6 +64,27 @@
 
 
     <script src="https://kit.fontawesome.com/3287ce58d5.js" crossorigin="anonymous"></script>
+
+    <script>
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.scroll-animation');
+
+            elements.forEach((element) => {
+                const position = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                const threshold = element.getAttribute('data-threshold');
+
+                if (position < windowHeight * threshold) {
+                    element.classList.add('animate');
+                } else {
+                    element.classList.remove('animate');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+    </script>
     <script type='module'>
         Echo.join('reverb')
             .listen('ToastEvent', (e) => {
