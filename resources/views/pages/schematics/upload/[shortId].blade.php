@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 use App\Forms\Components\SchematicPreviewRenderer;
 use Livewire\Volt\Component;
-name('schematics.upload');
+name('schematics.submit');
 
 new class extends Component implements HasForms {
     use InteractsWithForms;
