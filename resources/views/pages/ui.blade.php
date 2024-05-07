@@ -14,7 +14,6 @@
 
     <div class="container mx-auto py-8">
         <x-scroll-animation animation="fade-in" duration="1s" delay="0.2s">
-
             <x-color-palette :colors="$colors" />
         </x-scroll-animation>
     </div>
@@ -76,8 +75,7 @@
 
                     <x-feature-card icon="fas fa-star" title="Feature Card"
                         description="This is a feature card showcasing different color variants."
-                        backgroundColor="{{ $color }}"
-                        iconColor="{{ $loop->iteration % 2 == 0 ? 'secondary' : 'primary' }}" />
+                        backgroundColor="{{ $color }}" iconColor="primary" />
                 </x-scroll-animation>
             @endforeach
         </div>
