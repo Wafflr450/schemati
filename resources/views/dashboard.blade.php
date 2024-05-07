@@ -29,7 +29,7 @@ $deleteSchematic = function ($schematicId) {
 <x-app-layout>
     @volt
         <div class="p-4">
-            <div class="bg-base-100 overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="p-4">
                     <h1 class="font-semibold text-xl text-gray-200 leading-tight">
                         Schematics

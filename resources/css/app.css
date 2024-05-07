@@ -13,22 +13,12 @@
     display: none;
 }
 
-.dashed-grid-paper {
+.bg-radial-gradient {
+    background-image: radial-gradient(ellipse 80% 80% at 10% -20%, rgba(120, 119, 120, 0.3), rgba(120, 120, 120, 0.1));
+  }
 
-    --grid-size: 20px;
-    --grid-strength: 0.5px;
-    --grid-dash: 2px;
-    --grid-gap: 5px;
-    --grid-color: #2f3034;
-    --paper-color: #202126;
-
-  background-color: var(--paper-color);
-  background-size: var(--grid-gap) var(--grid-gap), var(--grid-size) var(--grid-size);
-  background-image:
-    linear-gradient(to bottom, transparent var(--grid-dash), var(--paper-color) var(--grid-dash)),
-    linear-gradient(to right, var(--grid-color) var(--grid-strength), transparent var(--grid-strength)),
-    linear-gradient(to right, transparent var(--grid-dash), var(--paper-color) var(--grid-dash)),
-    linear-gradient(to bottom, var(--grid-color) var(--grid-strength), transparent var(--grid-strength));
-
-
+.text-gradient {
+    background-image: linear-gradient(to right, #c026d3, #db2777);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
