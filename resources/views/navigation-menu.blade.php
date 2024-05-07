@@ -31,10 +31,10 @@
                         <img class="w-8 h-8 rounded-full" src="{{ Auth::user()->profile_photo_url }}" alt="User avatar" />
                     </button>
                     <!-- Dropdown menu -->
-                    <div class="z-50 hidden my-4 text-base list-none divide-y divide-gray-100 rounded-lg shadow0 dark:divide-gray-600"
+                    <div class="z-50 hidden my-4 list-none divide-y divide-gray-100 rounded-lg shadow bg-neutral text-base"
                         id="user-dropdown">
                         <div class="px-4 py-3">
-                            <span class="block text-sm text-gray-900 dark:text-white">
+                            <span class="block text-sm">
                                 {{ Auth::user()->name }}
                             </span>
                         </div>
