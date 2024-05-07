@@ -13,11 +13,13 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Utils\MinecraftAPI;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
+    use HasRoles;
 
     public $fillable = ['uuid'];
 
