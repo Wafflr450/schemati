@@ -5,13 +5,14 @@
         {{--  <x-animated-logo class="w-auto h-48 mx-auto mb-8" />  --}}
         {{--  <x-tag-tree />  --}}
         <div class="flex items-center justify-center mb-8">
-            <x-animated-logo-svg class="flex items-center justify-center w-32  rounded-full bg-primary-500" />
+            <x-animated-logo-svg class="flex items-center justify-center w-32" />
         </div>
         <h1 id="hero-animated-h1"
-            class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-shadow-lg">
-            Welcome to schemat.<span
-                class="bg-gradient-to-r from-fuchsia-600 to-pink-500 bg-clip-text text-transparent">io</span>
+            class="mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl lg:text-6xl text-shadow-lg">
+            Welcome to schemat.<x-text-gradient color="primary">io</x-text-gradient>
         </h1>
+
+
         <p id="hero-animated-subtitle"
             class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">
             A community-driven platform for sharing and discovering Minecraft schematics.

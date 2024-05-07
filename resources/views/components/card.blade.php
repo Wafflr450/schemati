@@ -1,8 +1,8 @@
 @props(['header' => '', 'body' => '', 'footer' => ''])
 
-<div {{ $attributes->merge(['class' => 'bg-neutral-950 bg-radial-gradient shadow-lg rounded-lg']) }}>
+<div {{ $attributes->merge(['class' => 'bg-white shadow-lg rounded-lg overflow-hidden']) }}>
     @if ($header)
-        <div class="px-4 py-5 sm:px-6">
+        <div class="px-4 py-5 sm:px-6 bg-gradient-to-r {{ \App\Utils\UiUtils::getGradientClasses('base') }}">
             {{ $header }}
         </div>
     @endif
@@ -14,7 +14,7 @@
     @endif
 
     @if ($footer)
-        <div class="px-4 py-4 sm:px-6">
+        <div class="px-4 py-4 sm:px-6 bg-gray-50">
             {{ $footer }}
         </div>
     @endif

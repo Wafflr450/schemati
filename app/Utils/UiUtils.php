@@ -5,7 +5,7 @@ namespace App\Utils;
 class UiUtils
 {
     const gradients = [
-        'primary' => 'from-primary-600 to-primary-400',
+        'primary' => 'from-primary-600 to-secondary-500',
         'secondary' => 'from-secondary-600 to-secondary-400',
         'accent' => 'from-accent-600 to-accent-400',
         'neutral' => 'from-neutral-950 to-neutral-800',

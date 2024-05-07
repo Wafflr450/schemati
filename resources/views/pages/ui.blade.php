@@ -44,15 +44,17 @@
             @foreach (range(1, 6) as $card)
                 <x-card>
                     <x-slot name="header">
-                        <h3 class="text-xl font-bold text-white">Card Header {{ $card }}</h3>
+                        <h2 class="text-xl font-semibold text-white">Card Header</h2>
                     </x-slot>
                     <x-slot name="body">
-                        <p class="text-neutral-300">This is the card body content.</p>
+                        <p class="text-gray-700">This is the card body content.</p>
+                        <div class="mt-4">
+                            <x-button.primary>Primary Action</x-button.primary>
+                            <x-button.secondary>Secondary Action</x-button.secondary>
+                        </div>
                     </x-slot>
                     <x-slot name="footer">
-                        <div class="flex justify-end">
-                            <x-button.secondary>Learn More</x-button.secondary>
-                        </div>
+                        <p class="text-sm text-gray-600">Card footer content goes here.</p>
                     </x-slot>
                 </x-card>
             @endforeach
