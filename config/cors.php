@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
@@ -15,7 +14,9 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    //allow VanillaTweaks_r604155.zip in the assets folder
+
+    'paths' => ['api/*', 'sanctum/csrf-cookie', '/ressource-packs/VanillaTweaks_r604155.zip'],
 
     'allowed_methods' => ['*'],
 
@@ -30,5 +31,4 @@ return [
     'max_age' => 0,
 
     'supports_credentials' => false,
-
 ];

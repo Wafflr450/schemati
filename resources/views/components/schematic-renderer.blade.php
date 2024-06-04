@@ -70,20 +70,12 @@
         window.addEventListener('resize', () => setCanvasDimensions('canvas-{{ $schematicId }}'));
         const schematic_{{ $schematicId }} = @json($schematicBase64);
         const canvas_{{ $schematicId }} = document.getElementById('canvas-{{ $schematicId }}');
-        const options = {
-            ...defaultSchematicOptions,
-            progressController: {
-                showProgress: async () => showProgress('progress-{{ $schematicId }}'),
-                hideProgress: async () => hideProgress('progress-{{ $schematicId }}'),
-                setProgress: async (progress) => setProgress('progress-{{ $schematicId }}', progress),
-                setProgressMessage: async (text) => setProgressMessage('progress-{{ $schematicId }}', text)
-            }
-        }
-        const renderer_{{ $schematicId }} = new SchematicRenderer.SchematicRenderer(
-            canvas_{{ $schematicId }},
-            schematic_{{ $schematicId }},
-            options
-        );
+
+        getAllResourcePackBlobs().then((resourcePackBlobs) => {
+            const renderer = new SchematicRenderer(canvas_{{ $schematicId }}, schematic_{{ $schematicId }}, {
+                resourcePackBlobs,
+            });
+        });
 
 
         function generatePreview() {
