@@ -3,7 +3,11 @@
 use function Livewire\Volt\{mount, state, computed};
 use App\Models\Schematic;
 
-state(['schematic' => fn() => $schematic]);
+state(['schematic' => fn() => $schematic, 'schematicName' => '']);
+
+mount(function () {
+    $this->schematicName = $this->schematic->name;
+});
 
 $deleteSchematic = function ($schematicId) {
     $schematic = \App\Models\Schematic::find($schematicId);
@@ -15,6 +19,15 @@ $deleteSchematic = function ($schematicId) {
     $this->redirect('/schematics');
 };
 
+$changeSchematicName = function ($schematicId) {
+    $schematic = \App\Models\Schematic::find($schematicId);
+    if (!$schematic) {
+        return;
+    }
+    $schematic->name = $this->schematicName;
+    $schematic->save();
+};
+
 ?>
 
 <x-app-layout>
@@ -22,11 +35,15 @@ $deleteSchematic = function ($schematicId) {
 
     <div class="flex justify-center p-4">
         @volt
-            <div class="bg-neutral rounded-lg shadow-lg flex flex-col lg:max-w-7xl mx-auto p-4">
-                <h2 class="font-semibold text-lg text-gray-80 mb-2">
-                    {{ $schematic->name }}
-                </h2>
-
+            <div class="bg-neutral rounded-lg shadow-lg flex flex-col p-4 w-full">
+                @if ($schematic->authors->contains(Auth::user()->uuid))
+                    <input type="text" class="font-semibold text-lg text-gray-80 mb-2 bg-transparent border-none"
+                        wire:model="schematicName" wire:change="changeSchematicName('{{ $schematic->id }}')">
+                @else
+                    <h2 class="font-semibold text-lg text-gray-80 mb-2">
+                        {{ $schematic->name }}
+                    </h2>
+                @endif
                 <div class="flex-grow shadow-[inset_0_4px_4px_rgba(1,0,0,0.6)] rounded-lg bg-neutral">
                     <x-schematic-renderer :schematic="$schematic" />
                 </div>

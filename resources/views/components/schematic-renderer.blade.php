@@ -74,6 +74,7 @@
         getAllResourcePackBlobs().then((resourcePackBlobs) => {
             const renderer = new SchematicRenderer(canvas_{{ $schematicId }}, schematic_{{ $schematicId }}, {
                 resourcePackBlobs,
+                debugGUI: true,
             });
         });
 
@@ -96,11 +97,12 @@
             const rotation = 360;
             console.log('Generating preview');
             //store the webm and png in the inputs
-            renderer_{{ $schematicId }}.takeRotationWebM(resolutionX, resolutionY, frameRate, duration, rotation)
+            renderer_{{ $schematicId }}.getRotationWebM(resolutionX, resolutionY, frameRate, duration, rotation)
                 .then(
-                    webm => {
+                    webmBlob => {
+                        const webm = URL.createObjectURL(webmBlob);
                         webmInput.value = webm;
-                        return renderer_{{ $schematicId }}.takeScreenshot(resolutionX, resolutionY)
+                        return renderer_{{ $schematicId }}.getScreenshot(resolutionX, resolutionY)
                             .then(
                                 png => {
                                     pngInput.value = png;

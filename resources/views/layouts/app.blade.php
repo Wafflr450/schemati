@@ -16,7 +16,8 @@
     <!-- Scripts -->
     {{--  <script defer src="http://localhost:3000/bundle.js" wire:ignore></script>  --}}
 
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/echo.js'])
+    {{--  @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/echo.js'])  --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     <!-- Styles -->
@@ -84,13 +85,13 @@
         window.addEventListener('scroll', animateOnScroll);
         window.addEventListener('load', animateOnScroll);
     </script>
-    <script type='module'>
+    {{--  <script type='module'>
         Echo.join('reverb')
             .listen('ToastEvent', (e) => {
                 console.log(e.message.type, e.message.message, e.message.title);
                 Toast[e.message.type](e.message.message, e.message.title);
             });
-    </script>
+    </script>  --}}
     <script>
         async function getVanillaTweaksResourcePackLinks() {
             return fetch(

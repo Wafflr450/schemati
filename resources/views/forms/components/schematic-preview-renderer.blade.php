@@ -92,29 +92,34 @@
                 setProgressMessage: async (text) => setProgressMessage('progress-{{ $schematicId }}', text)
             }
         }
-
         getAllResourcePackBlobs().then((resourcePackBlobs) => {
-            const renderer = new SchematicRenderer(canvas_{{ $schematicId }}, schematic_{{ $schematicId }}, {
-                resourcePackBlobs,
-            });
+            const renderer = new SchematicRenderer(canvas_{{ $schematicId }},
+                schematic_{{ $schematicId }}, {
+                    resourcePackBlobs,
+                });
+            window.generatePreview_{{ $schematicId }} = async function() {
+                const resolutionX = 720;
+                const resolutionY = 480;
+                const frameRate = 24;
+                const duration = 5;
+                const rotation = 360;
+                const webmBlob = await renderer.getRotationWebM(resolutionX, resolutionY, frameRate,
+                    duration, rotation);
+                var reader = new FileReader();
+                const webmBase64 = await new Promise((resolve) => {
+                    reader.onloadend = function() {
+                        resolve(reader.result);
+                    }
+                    reader.readAsDataURL(webmBlob);
+                });
+                const png = await renderer.getScreenshot(resolutionX, resolutionY);
+                @this.set('{{ $getStatePath() }}', {
+                    webm: webmBase64,
+                    png: png
+                });
+
+            }
+
         });
-
-
-        window.generatePreview_{{ $schematicId }} = async function() {
-            const resolutionX = 720;
-            const resolutionY = 480;
-            const frameRate = 24;
-            const duration = 5;
-            const rotation = 360;
-
-            const webm = await renderer_{{ $schematicId }}.takeRotationWebM(resolutionX, resolutionY, frameRate,
-                duration, rotation);
-            const png = await renderer_{{ $schematicId }}.takeScreenshot(resolutionX, resolutionY);
-            console.log("Preview generated");
-            @this.set('{{ $getStatePath() }}', {
-                webm: webm,
-                png: png
-            });
-        }
     </script>
 @endPushOnce
