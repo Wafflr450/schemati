@@ -6,6 +6,11 @@
             'current' => true,
         ],
         [
+            'name' => 'Tag Editor',
+            'href' => '/tag-editor',
+            'current' => false,
+        ],
+        [
             'name' => 'Schematics',
             'href' => '/schematics',
             'current' => false,
@@ -83,7 +88,7 @@
             <ul class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
                 @foreach ($links as $link)
                     <li>
-                        <a href="{{ $link['href'] }}" wire:navigate.hover
+                        <a href="{{ $link['href'] }}"
                             class="block py-2 pr-4 pl-3 text-gray-700 rounded  md:p-0 text-white hover:text-pink-500"
                             aria-current="{{ $link['current'] ? 'page' : '' }}">{{ $link['name'] }}</a>
                     </li>

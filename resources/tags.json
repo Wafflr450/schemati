@@ -86,8 +86,8 @@
                         ]
                     },
                     {
-                        "name": "mechanical",
-                        "description": "Mechanical tag",
+                        "name": "mecanical",
+                        "description": "Mecanical tag",
                         "children": [
                             {
                                 "name": "door",

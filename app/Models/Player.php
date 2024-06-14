@@ -52,4 +52,19 @@ class Player extends Model
     {
         return $this->belongsToMany(Schematic::class, 'users_schematics');
     }
+
+    public function getTopMostAdminTagsAttribute()
+    {
+        return Tag::getTopMostAdminedTags($this);
+    }
+
+    public function getUsableTagsAttribute()
+    {
+        return Tag::getUsableTags($this);
+    }
+
+    public function getVisibleTagsAttribute()
+    {
+        return Tag::getVisibleTags($this);
+    }
 }

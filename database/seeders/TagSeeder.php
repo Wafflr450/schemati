@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Player;
 use App\Models\Tag;
 
 class TagSeeder extends Seeder
@@ -23,6 +24,8 @@ class TagSeeder extends Seeder
         $structure = json_decode(file_get_contents(resource_path('tags.json')), true);
 
         $this->createTagTree($root, $structure);
+        $player = Player::where('last_seen_name', 'Nano_')->first();
+        $root->admins()->attach($player);
     }
 
     private function createTagTree(Tag $parent, array $structure): void

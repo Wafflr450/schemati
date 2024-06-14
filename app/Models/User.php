@@ -59,4 +59,9 @@ class User extends Authenticatable
     {
         return $this->player->last_seen_name ?? $this->uuid;
     }
+
+    public function getAdminedTagsAttribute()
+    {
+        return $this->player->tags()->wherePivot('role', 'admin')->get();
+    }
 }
