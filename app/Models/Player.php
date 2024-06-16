@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +19,8 @@ class Player extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
+
+    protected $appends = ['head_url']; // Add this line
 
     public static function booted()
     {

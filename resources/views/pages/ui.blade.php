@@ -1,4 +1,9 @@
 <x-app-layout>
+
+    <livewire:playertagpermissionmanager :tag="\App\Models\Tag::first()" />
+
+
+
     @php
         $colors = ['primary', 'secondary', 'accent', 'neutral', 'base', 'info', 'success', 'warning', 'error'];
     @endphp

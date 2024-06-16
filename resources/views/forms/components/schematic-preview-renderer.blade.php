@@ -1,5 +1,6 @@
-<div class="static justify-center flex justify-around content-around" x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
-    <div class="w-2/3 mx-auto relative">
+<div
+    class="flex flex-col md:flex-row justify-center space-y-6 md:space-y-0 md:space-x-6 p-4 bg-neutral-900 rounded-lg shadow-lg">
+    <div class="w-full md:w-2/3 mx-auto relative">
         <canvas id="canvas-{{ $schematicId }}" wire:ignore
             class="w-full h-[50vh] shadow-[inset_0_4px_4px_rgba(1,0,0,0.6)] bg-base-200 rounded-lg">
             Your browser does not support the HTML5 canvas tag.
@@ -15,33 +16,33 @@
             </div>
         </div>
         <div class="absolute bottom-0 right-0 p-4">
-            <button type="button" x-on:click="window.generatePreview_{{ $schematicId }}()"
-                class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
-                Generate Preview <i class="fas fa-camera"></i>
-            </button>
+            <x-action-button type="button" x-on:click="window.generatePreview_{{ $schematicId }}()" color="primary"
+                icon="camera">
+                Generate Preview
+            </x-action-button>
         </div>
     </div>
-    <div class="w-1/3 mx-auto">
-        <div class="h-full">
-            <div class="h-1/2 flex items-center justify-center">
+    <div class="w-full md:w-1/3 mx-auto flex items-center justify-center">
+        <div class="space-y-6">
+            <div class="h-1/2 flex items-center justify-center overflow-hidden">
                 @if ($getState() && array_key_exists('png', $getState()))
                     <img src="{{ $getState()['png'] }}" class="object-cover rounded-t-lg w-full h-full"
                         alt="Preview" />
                 @else
-                    <div role="status" x-show="!state || !'png' in state"
-                        class="flex items-center justify-center h-56 max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700 w-full h-full">
+                    <div role="status" x-show="!state || !('png' in state)"
+                        class="flex items-center justify-center h-full w-full max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
                         <i class="fas fa-camera text-4xl text-gray-500 dark:text-gray-400"></i>
                         <span class="sr-only">Loading...</span>
                     </div>
                 @endif
             </div>
-            <div class="h-1/2 flex items-center justify-center">
+            <div class="h-1/2 flex items-center justify-center overflow-hidden">
                 @if ($getState() && array_key_exists('webm', $getState()))
                     <video class="w-full h-full object-cover rounded-b-lg" src="{{ $getState()['webm'] }}" loop muted
                         autoplay></video>
                 @else
-                    <div role="status" x-show="!state || !'webm' in state"
-                        class="flex items-center justify-center h-56 max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700 w-full h-full">
+                    <div role="status" x-show="!state || !('webm' in state)"
+                        class="flex items-center justify-center h-full w-full max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
                         <i class="fas fa-video text-4xl text-gray-500 dark:text-gray-400"></i>
                         <span class="sr-only">Loading...</span>
                     </div>
@@ -50,6 +51,7 @@
         </div>
     </div>
 </div>
+
 
 @pushOnce('scripts')
     <script type="module" defer>

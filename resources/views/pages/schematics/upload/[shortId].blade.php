@@ -5,7 +5,9 @@ use function Laravel\Folio\name;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
@@ -75,18 +77,34 @@ new class extends Component implements HasForms {
     {
         return $form
             ->schema([
-                TextInput::make('title')->required(),
-                SchematicPreviewRenderer::make('schematicPreview')
-                    ->viewData([
-                        'schematicBase64' => $this->schematicBase64,
-                        'schematicId' => $this->shortId,
-                    ])
-                    ->required()
-                    ->rules(['required', 'array', 'size:2']),
-                RichEditor::make('description')->required(),
+                Wizard::make([
+                    Wizard\Step::make('Preview')
+                        ->schema([
+                            SchematicPreviewRenderer::make('schematicPreview')
+                                ->viewData([
+                                    'schematicBase64' => $this->schematicBase64,
+                                    'schematicId' => $this->shortId,
+                                ])
+                                ->required()
+                                ->rules(['required', 'array', 'size:2'])
+                                ->label('Schematic Preview')
+                                ->hint('Upload a preview image and video for your schematic'),
+                        ])
+                        ->icon('heroicon-o-camera'),
+                    Wizard\Step::make('Details')
+                        ->schema([TextInput::make('title')->required()->label('Schematic Title')->placeholder('Enter a title for your schematic'), RichEditor::make('description')->required()->label('Description')->placeholder('Provide a detailed description of your schematic')])
+                        ->icon('heroicon-o-pencil'),
+                ])
+                    ->nextAction(
+                        fn(Action $action) => $action->label('Next step')->extraAttributes([
+                            'class' => 'bg-primary-600 hover:bg-primary-700',
+                        ]),
+                    )
+                    ->submitAction(view('components.submit-button')),
             ])
             ->statePath('data');
     }
+
     public function create()
     {
         $this->validate();
@@ -145,37 +163,21 @@ new class extends Component implements HasForms {
 <x-app-layout>
     @volt
         <div class="max-w-7xl mx-auto pt-4">
-            <form wire:submit="create">
-
-                <div class="bg-base-300 overflow-hidden shadow-xl sm:rounded-lg p-4">
+            <form wire:submit.prevent="create">
+                <div class="bg-neutral overflow-hidden shadow-xl sm:rounded-lg p-4">
                     <div class="flex items-center justify-between">
-
                         <div class="p-4">
-                            <h1 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight p-0 m-0">
+                            <h1 class="font-semibold text-xl text-white dark:text-gray-200 leading-tight p-0 m-0">
                                 Upload Schematic
                             </h1>
-                            <span class="text-gray-500 text-sm">
+                            <span class="text-gray-200 text-sm">
                                 {{ $shortId }}
                             </span>
                         </div>
-                        <div>
-                            <button type="submit" wire:loading.remove
-                                class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
-                                Submit
-                            </button>
-                            <button wire:loading
-                                class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary active:bg-secondary tranform hover:scale-105 transition duration-300 ease-in-out active:scale-95">
-                                Submitting... <i class="fas fa-spinner animate-spin"></i>
-                            </button>
-                        </div>
                     </div>
                     {{ $this->form }}
-
-
-
                 </div>
             </form>
-
         </div>
     @endvolt
 </x-app-layout>
