@@ -1,6 +1,7 @@
 @props([
-    'color' => 'primary', // default color
+    'color' => 'none', // default color
     'icon' => null, // optional icon
+    'textColor' => 'text-white', // default text color
 ])
 
 @php
@@ -8,9 +9,11 @@
 @endphp
 
 <button
-    {{ $attributes->merge(['class' => "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-md text-white bg-gradient-to-r $gradientClasses focus:outline-none focus:ring-2 focus:ring-offset-2"]) }}>
+    {{ $attributes->merge(['class' => "inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-lg shadow-md  $gradientClasses transition duration-150 ease-in-out transform hover:scale-[1.02] active:scale-[0.99] $textColor"]) }}>
     @if ($icon)
-        <i class="fas fa-{{ $icon }} mr-2"></i>
+        <i class="fas fa-{{ $icon }}"></i>
     @endif
-    {{ $slot }}
+    @if (!$slot->isEmpty())
+        <span class="ml-2">{{ $slot }}</span>
+    @endif
 </button>

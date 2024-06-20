@@ -70,6 +70,12 @@ new class extends Component {
         $this->search = '';
         $this->players = [];
     }
+
+    #[On('clearSearch')]
+    public function clearSearch()
+    {
+        $this->resetSearch();
+    }
 };
 ?>
 

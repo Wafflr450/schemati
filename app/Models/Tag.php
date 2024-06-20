@@ -12,7 +12,7 @@ class Tag extends Model implements HasMedia, Wireable
     use InteractsWithMedia;
     use HasFactory;
 
-    protected $fillable = ['name', 'parent_id', 'description', 'public_use', 'public_viewing', 'color'];
+    protected $fillable = ['name', 'parent_id', 'description', 'scope', 'color'];
 
     protected $casts = [
         'id' => 'string',
@@ -38,8 +38,7 @@ class Tag extends Model implements HasMedia, Wireable
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'public_use' => $this->public_use,
-            'public_viewing' => $this->public_viewing,
+            'scope' => $this->scope,
             'parent_id' => $this->parent_id,
         ];
     }
@@ -49,10 +48,9 @@ class Tag extends Model implements HasMedia, Wireable
         $id = $value['id'];
         $name = $value['name'];
         $description = $value['description'];
-        $public_use = $value['public_use'];
-        $public_viewing = $value['public_viewing'];
+        $scope = $value['scope'];
         $parent_id = $value['parent_id'];
-        return new static(compact('id', 'name', 'description', 'public_use', 'public_viewing', 'parent_id'));
+        return new static(compact('id', 'name', 'description', 'scope', 'parent_id'));
     }
 
     public function admins()
@@ -60,19 +58,29 @@ class Tag extends Model implements HasMedia, Wireable
         return $this->belongsToMany(Player::class, 'tag_admins');
     }
 
-    public function users()
+    public function globalUsers()
     {
-        if ($this->public_use) {
+        if ($this->scope === 'public_use') {
             return Player::all();
         }
+        return $this->users;
+    }
+
+    public function users()
+    {
         return $this->belongsToMany(Player::class, 'tag_users');
+    }
+
+    public function globalViewers()
+    {
+        if ($this->scope === 'public_viewing' || $this->scope === 'public_use') {
+            return Player::all();
+        }
+        return $this->viewers;
     }
 
     public function viewers()
     {
-        if ($this->public_viewing || $this->public_use) {
-            return Player::all();
-        }
         return $this->belongsToMany(Player::class, 'tag_viewers');
     }
 
@@ -112,7 +120,7 @@ class Tag extends Model implements HasMedia, Wireable
 
     public function canUse($player)
     {
-        if ($this->public_use) {
+        if ($this->scope === 'public_use') {
             return true;
         }
         $canChildrenUse = $this->children
@@ -125,7 +133,7 @@ class Tag extends Model implements HasMedia, Wireable
 
     public function canSee($player)
     {
-        if ($this->public_viewing || $this->public_use) {
+        if ($this->scope === 'public_viewing' || $this->scope === 'public_use') {
             return true;
         }
         $canChildrenSee = $this->children

@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <livewire:playertagpermissionmanager :tag="\App\Models\Tag::first()" />
+    {{--  <livewire:playertagpermissionmanager :tag="\App\Models\Tag::first()" />  --}}
 
 
 

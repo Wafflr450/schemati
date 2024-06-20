@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->uuid('id')->primary()->unique();
             $table->uuid('parent_id')->nullable();
             $table->string('name')->unique();
+            $table->enum('scope', ['public_viewing', 'public_use', 'private'])->default('private');
             $table->longText('description')->nullable();
             $table->string('color')->nullable();
             $table->timestamps();

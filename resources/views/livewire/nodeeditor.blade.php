@@ -25,9 +25,7 @@ new class extends Component {
     #[Rule('required')]
     public $description;
 
-    public $publicUse;
-
-    public $publicViewing;
+    public $scope;
 
     public function mount()
     {
@@ -35,8 +33,7 @@ new class extends Component {
         $this->name = $this->currentlySelectedNode->name;
         $this->color = $this->currentlySelectedNode->color;
         $this->description = $this->currentlySelectedNode->description;
-        $this->publicUse = $this->currentlySelectedNode->public_use == 1;
-        $this->publicViewing = $this->currentlySelectedNode->public_viewing == 1;
+        $this->scope = $this->currentlySelectedNode->scope;
         $this->nodeId = $this->currentlySelectedNode->id;
     }
 
@@ -48,6 +45,8 @@ new class extends Component {
         $this->name = $node->name;
         $this->color = $node->color;
         $this->description = $node->description;
+        $this->scope = $node->scope;
+        $this->publicViewing = $node->public_viewing == 1 || $node->public_use == 1;
         $this->nodeId = $node->id;
     }
 
@@ -59,8 +58,7 @@ new class extends Component {
             'name' => $this->name,
             'color' => $this->color,
             'description' => $this->description,
-            'public_use' => $this->publicUse,
-            'public_viewing' => $this->publicViewing,
+            'scope' => $this->scope,
         ]);
         $this->dispatch('node-updated', nodeId: $node);
     }
@@ -91,6 +89,10 @@ new class extends Component {
         $this->showDeleteModal = false;
     }
 
+    public function updated($name, $value)
+    {
+    }
+
     public function delete()
     {
         $parentId = Tag::find($this->nodeId)->parent_id;
@@ -108,7 +110,13 @@ new class extends Component {
     }
 }; ?>
 
-<div class="bg-gradient-to-br {{ \App\Utils\UiUtils::getGradientClasses('neutral') }} rounded-xl shadow-2xl p-8">
+<div class="bg-gradient-to-br {{ \App\Utils\UiUtils::getGradientClasses('neutral') }} rounded-xl shadow-2xl p-4">
+    <div class="pb-4 flex justify-between items-center">
+        <x-action-button wire:click="$set('showAddChildModal', true)" textColor="text-info" icon="plus">
+        </x-action-button>
+        <x-action-button wire:click="confirmDelete" textColor="text-error" icon="trash">
+        </x-action-button>
+    </div>
     <form wire:submit.prevent="update" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -123,7 +131,7 @@ new class extends Component {
                 <label for="color" class="block text-sm font-semibold text-gray-200">Color</label>
                 <div class="mt-1 flex items-center space-x-3">
                     <div class="relative">
-                        <input type="color" name="color" id="color" wire:model.defer="color"
+                        <input type="color" name="color" id="color" wire:model.live="color"
                             class="w-8 h-8 appearance-none border-2 border-gray-700 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <div class="absolute inset-0 rounded-full border border-gray-700 pointer-events-none"
                             style="background-color: {{ $color }}"></div>
@@ -145,36 +153,30 @@ new class extends Component {
             </div>
         </div>
         <div class="flex items-center justify-between">
-            <div class="flex items-center">
-                <input type="checkbox" name="publicUse" id="publicUse" wire:model.defer="publicUse"
-                    class="h-4 w-4 text-blue-500 focus:ring-blue-500 bg-gray-700 border-gray-600 rounded">
-                <label for="publicUse" class="ml-2 block text-sm text-gray-200">
-                    Publicly Usable
-                </label>
+            <div class="md:col-span-2">
+                <label for="scope" class="block text-sm font-semibold text-gray-200">Scope</label>
+                <select id="scope" name="scope" wire:model.defer="scope"
+                    class="mt-1 block w-full bg-neutral-900 border border-gray-700 rounded-lg text-gray-200 shadow focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <option value="public_use">Public Use</option>
+                    <option value="public_viewing">Public Viewing</option>
+                    <option value="private">Private</option>
+                </select>
+                @error('scope')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
-            <div class="flex items-center">
-                <input type="checkbox" name="publicViewing" id="publicViewing" wire:model.defer="publicViewing"
-                    class="h-4 w-4 text-blue-500 focus:ring-blue-500 bg-gray-700 border-gray-600 rounded">
-                <label for="publicViewing" class="ml-2 block text-sm text-gray-200">
-                    Publicly Viewable
-                </label>
-            </div>
-            <div>
-                <x-action-button type="submit" color="success" icon="save" class="custom-class">
-                    Update
-                </x-action-button>
-            </div>
+
+        </div>
+        <div class="flex justify-end">
+            <x-action-button type="submit" textColor="text-success" icon="save" class="custom-class">
+                Update
+            </x-action-button>
         </div>
     </form>
 
-    <div class="mt-8 flex justify-between items-center">
-        <x-action-button wire:click="$set('showAddChildModal', true)" color="info" icon="plus">
-            Add Child
-        </x-action-button>
-        <x-action-button wire:click="confirmDelete" color="error" icon="trash">
-            Delete
-        </x-action-button>
-    </div>
+
+
+    <livewire:playertagpermissionmanager :tagId="$nodeId" />
 
     @if ($showDeleteModal)
         <div class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">

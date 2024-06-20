@@ -1,5 +1,6 @@
 <?php
 
+use Livewire\Attributes\Reactive;
 use Livewire\Volt\Component;
 use Livewire\Attributes\On;
 
@@ -8,6 +9,9 @@ use App\Models\Tag;
 
 new class extends Component {
     public $tag;
+
+    public $tagId;
+
     public $selectedAdmins = [];
     public $selectedUsers = [];
     public $selectedViewers = [];
@@ -15,12 +19,12 @@ new class extends Component {
     public $showSearch = false;
     public $searchRole = '';
 
-    public function mount(Tag $tag)
+    public function mount()
     {
-        $this->tag = $tag;
-        $this->selectedAdmins = $tag->admins()->pluck('id')->toArray();
-        $this->selectedUsers = $tag->users() instanceof \Illuminate\Database\Eloquent\Collection ? $tag->users()->pluck('id')->toArray() : [];
-        $this->selectedViewers = $tag->viewers() instanceof \Illuminate\Database\Eloquent\Collection ? $tag->viewers()->pluck('id')->toArray() : [];
+        $this->tag = Tag::find($this->tagId);
+        $this->selectedAdmins = $this->tag->admins()->pluck('id')->toArray();
+        $this->selectedUsers = $this->tag->users()->pluck('id')->toArray();
+        $this->selectedViewers = $this->tag->viewers()->pluck('id')->toArray();
     }
 
     #[On('playerSelected')]
@@ -36,12 +40,15 @@ new class extends Component {
 
     public function syncRoles()
     {
-        $this->tag->admins()->sync($this->selectedAdmins, false);
-        if (!$this->tag->public_use) {
-            $this->tag->users()->sync($this->selectedUsers, false);
+        $this->tag = Tag::find($this->tagId);
+        $this->tag->admins()->sync($this->selectedAdmins);
+
+        if ($this->tag->scope == 'private' || $this->tag->scope == 'public_viewing') {
+            $this->tag->users()->sync($this->selectedUsers);
         }
-        if (!$this->tag->public_viewing && !$this->tag->public_use) {
-            $this->tag->viewers()->sync($this->selectedViewers, false);
+
+        if ($this->tag->scope == 'private') {
+            $this->tag->viewers()->sync($this->selectedViewers);
         }
     }
 
@@ -56,81 +63,102 @@ new class extends Component {
         $this->{$role} = array_diff($this->{$role}, [$playerId]);
         $this->syncRoles();
     }
+
+    #[On('node-updated')]
+    public function handleNodeUpdated($nodeId)
+    {
+        //dd($nodeId);
+        //$this->tag = $this->tag->fresh();
+    }
 };
 ?>
 
-<div>
+<div class="pt-4">
     <h2 class="text-2xl font-semibold text-gray-200">Player Tag Permission Manager for {{ $tag->name }}</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="space-y-2">
             <label class="block text-sm font-semibold text-gray-200">Admins</label>
-            <ul class="bg-neutral-800 rounded-lg p-4 space-y-2">
+            <ul class="bg-neutral-800 rounded-lg space-y-2">
                 @foreach ($selectedAdmins as $playerId)
                     <li class="flex items-center justify-between p-2 border-b border-gray-700 last:border-none">
                         <div class="flex items-center">
                             <img src="{{ Player::find($playerId)->head_url }}" alt="Player Head"
-                                class="w-8 h-8 rounded-full mr-4">
+                                class="w-8 h-8 rounded-sm mr-4">
                             <p class="text-gray-200 font-semibold">{{ Player::find($playerId)->last_seen_name }}</p>
                         </div>
-                        <button wire:click="removePlayer('selectedAdmins', '{{ $playerId }}')"
-                            class="bg-red-500 hover:bg-red-600 text-white text-sm px-2 py-1 rounded">Remove</button>
+                        {{--  <button wire:click="removePlayer('selectedAdmins', '{{ $playerId }}')"
+                            class="bg-red-500 hover:bg-red-600 text-white text-sm px-2 py-1 rounded">
+                            <i class="fas fa-xmark"></i>
+                        </button>  --}}
+                        <x-action-button textColor="text-error"
+                            wire:click="removePlayer('selectedAdmins', '{{ $playerId }}')" icon="times">
+                        </x-action-button>
                     </li>
                 @endforeach
-                <li class="text-center">
-                    <button wire:click="showPlayerSearch('selectedAdmins')"
-                        class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary">Add
-                        Admin</button>
+                <li class="text-center py-2">
+                    <x-action-button color="primary" wire:click="showPlayerSearch('selectedAdmins')" icon="plus">
+                        Add Admin
+                    </x-action-button>
                 </li>
             </ul>
         </div>
 
-        <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-200">Users</label>
-            <ul class="bg-neutral-800 rounded-lg p-4 space-y-2">
-                @foreach ($selectedUsers as $playerId)
-                    <li class="flex items-center justify-between p-2 border-b border-gray-700 last:border-none">
-                        <div class="flex items-center">
-                            <img src="{{ Player::find($playerId)->head_url }}" alt="Player Head"
-                                class="w-8 h-8 rounded-full mr-4">
-                            <p class="text-gray-200 font-semibold">{{ Player::find($playerId)->last_seen_name }}</p>
-                        </div>
-                        <button wire:click="removePlayer('selectedUsers', '{{ $playerId }}')"
-                            class="bg-red-500 hover:bg-red-600 text-white text-sm px-2 py-1 rounded">Remove</button>
-                    </li>
-                @endforeach
-                <li class="text-center">
-                    <button wire:click="showPlayerSearch('selectedUsers')"
-                        class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary">Add
-                        User</button>
-                </li>
-            </ul>
-        </div>
+        @if ($tag->scope == 'private' || $tag->scope == 'public_viewing')
 
-        <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-200">Viewers</label>
-            <ul class="bg-neutral-800 rounded-lg p-4 space-y-2">
-                @foreach ($selectedViewers as $playerId)
-                    <li class="flex items-center justify-between p-2 border-b border-gray-700 last:border-none">
-                        <div class="flex items-center">
-                            <img src="{{ Player::find($playerId)->head_url }}" alt="Player Head"
-                                class="w-8 h-8 rounded-full mr-4">
-                            <p class="text-gray-200 font-semibold">{{ Player::find($playerId)->last_seen_name }}</p>
-                        </div>
-                        <button wire:click="removePlayer('selectedViewers', '{{ $playerId }}')"
-                            class="bg-red-500 hover:bg-red-600 text-white text-sm px-2 py-1 rounded">Remove</button>
+            <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-200">Users</label>
+                <ul class="bg-neutral-800 rounded-lg space-y-2">
+                    @foreach ($selectedUsers as $playerId)
+                        <li class="flex items-center justify-between p-2 border-b border-gray-700 last:border-none">
+                            <div class="flex items-center">
+                                <img src="{{ Player::find($playerId)->head_url }}" alt="Player Head"
+                                    class="w-8 h-8 rounded-sm mr-4">
+                                <p class="text-gray-200 font-semibold">{{ Player::find($playerId)->last_seen_name }}</p>
+                            </div>
+                            <x-action-button textColor="text-error"
+                                wire:click="removePlayer('selectedUsers', '{{ $playerId }}')" icon="times">
+                            </x-action-button>
+                        </li>
+                    @endforeach
+                    <li class="text-center py-2">
+                        <x-action-button color="primary" wire:click="showPlayerSearch('selectedUsers')" icon="plus">
+                            Add User
+                        </x-action-button>
                     </li>
-                @endforeach
-                <li class="text-center">
-                    <button wire:click="showPlayerSearch('selectedViewers')"
-                        class="bg-primary rounded-lg px-4 py-2 text-sm font-semibold hover:bg-secondary">Add
-                        Viewer</button>
-                </li>
-            </ul>
-        </div>
+                </ul>
+            </div>
+        @endif
+
+        @if ($tag->scope == 'private')
+
+            <div class="space-y-2">
+                <label class="block text-sm font-semibold text-gray-200">Viewers</label>
+                <ul class="bg-neutral-800 rounded-lg space-y-2">
+                    @foreach ($selectedViewers as $playerId)
+                        <li class="flex items-center justify-between p-2 border-b border-gray-700 last:border-none">
+                            <div class="flex items-center">
+                                <img src="{{ Player::find($playerId)->head_url }}" alt="Player Head"
+                                    class="w-8 h-8 rounded-sm mr-4">
+                                <p class="text-gray-200 font-semibold">{{ Player::find($playerId)->last_seen_name }}</p>
+                            </div>
+                            <x-action-button textColor="text-error"
+                                wire:click="removePlayer('selectedViewers', '{{ $playerId }}')" icon="times">
+                            </x-action-button>
+                        </li>
+                    @endforeach
+                    <li class="text-center py-2">
+                        <x-action-button color="primary" wire:click="showPlayerSearch('selectedViewers')"
+                            icon="plus">
+                            Add Viewer
+                        </x-action-button>
+                    </li>
+                </ul>
+            </div>
+        @endif
     </div>
 
     <!-- Player Search Modal -->
-    <div x-data="{ open: @entangle('showSearch') }" x-show="open" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title"
+    <div x-data="{ open: @entangle('showSearch') }" x-show="open" class="fixed z-20 inset-0 overflow-y-auto" aria-labelledby="modal-title"
         role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div x-show="open" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true">

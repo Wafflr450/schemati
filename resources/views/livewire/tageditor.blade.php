@@ -1,5 +1,6 @@
 <?php
 
+use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
 use Livewire\Attributes\On;
 use App\Models\Tag;
@@ -74,6 +75,19 @@ new class extends Component {
 
     @script
         <script>
+            let getScopeIcon = function(scope) {
+                switch (scope) {
+                    case 'public_use':
+                        return '🌐';
+                    case 'public_viewing':
+                        return '👁️';
+                    case 'private':
+                        return '🔒';
+                    default:
+                        return '❓';
+                }
+            }
+
             document.addEventListener('livewire:init', () => {
                 let getGraphOptions = function(tagHierarchy, selectedNodeId) {
                     function findNodeAndStyleIt(node) {
@@ -83,8 +97,15 @@ new class extends Component {
                             };
                         }
                         node.label = {
-                            color: node.color
+                            color: '#fff',
+                            backgroundColor: '#222',
+                            borderColor: node.color || '#333',
+                            borderWidth: node.id === selectedNodeId ? 4 : 1,
+                            borderRadius: 4,
+                            padding: [4, 8],
+                            borderRadius: 4
                         };
+                        node.name = node.name + ' ' + getScopeIcon(node.scope);
                         if (node.children) {
                             node.children.forEach(findNodeAndStyleIt);
                         }
@@ -98,15 +119,13 @@ new class extends Component {
                                 var data = params.data;
                                 var tooltip = '<b>' + data.name + '</b><br/>';
                                 tooltip += 'Description: ' + data.description + '<br/>';
-                                tooltip += 'ID: ' + data.id + '<br/>';
-                                tooltip += 'Parent ID: ' + (data.parent_id || 'null') + '<br/>';
-                                tooltip += 'Created At: ' + data.created_at + '<br/>';
-                                tooltip += 'Updated At: ' + data.updated_at;
+
                                 return tooltip;
                             }
                         },
                         series: [{
                             type: 'tree',
+                            roam: true,
                             data: [tagHierarchy],
                             top: '5%',
                             left: '5%',
@@ -117,18 +136,16 @@ new class extends Component {
                             orient: 'vertical',
                             expandAndCollapse: false,
                             label: {
-                                position: 'top',
+                                position: 'inside',
                                 rotate: 0,
                                 verticalAlign: 'middle',
-                                align: 'right',
+                                align: 'center',
                                 fontSize: 12,
-                                backgroundColor: 'rgba(0,0,0,0.5)',
-                                borderRadius: 3,
-                                padding: 5
+                                fontWeight: 'bold'
                             },
                             leaves: {
                                 label: {
-                                    position: 'bottom',
+                                    position: 'inside',
                                     rotate: 0,
                                     verticalAlign: 'middle',
                                     align: 'center'
