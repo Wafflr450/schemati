@@ -18,6 +18,8 @@ class Tag extends Model implements HasMedia, Wireable
         'id' => 'string',
     ];
 
+    protected $appends = ['icon_url'];
+
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -39,7 +41,9 @@ class Tag extends Model implements HasMedia, Wireable
             'name' => $this->name,
             'description' => $this->description,
             'scope' => $this->scope,
+            'color' => $this->color,
             'parent_id' => $this->parent_id,
+            'icon_url' => $this->icon_url,
         ];
     }
 
@@ -49,8 +53,26 @@ class Tag extends Model implements HasMedia, Wireable
         $name = $value['name'];
         $description = $value['description'];
         $scope = $value['scope'];
+        $color = $value['color'];
         $parent_id = $value['parent_id'];
-        return new static(compact('id', 'name', 'description', 'scope', 'parent_id'));
+        return new static(compact('id', 'name', 'description', 'scope', 'parent_id', 'color'));
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('icon')->singleFile();
+    }
+
+    public function getIconUrlAttribute()
+    {
+        $media = $this->getFirstMedia('icon');
+        $url = $media ? $media->getFullUrl() : null;
+        return str_replace('minio', 'localhost', $url);
+    }
+
+    public function schematics()
+    {
+        return $this->belongsToMany(Schematic::class);
     }
 
     public function admins()
@@ -118,19 +140,6 @@ class Tag extends Model implements HasMedia, Wireable
         return $this->admins->contains($player) || $this->parent?->canAdmin($player);
     }
 
-    public function canUse($player)
-    {
-        if ($this->scope === 'public_use') {
-            return true;
-        }
-        $canChildrenUse = $this->children
-            ->map(function ($child) use ($player) {
-                return $child->canUse($player);
-            })
-            ->contains(true);
-        return $this->users->contains($player) || $this->canAdmin($player) || $canChildrenUse;
-    }
-
     public function canSee($player)
     {
         if ($this->scope === 'public_viewing' || $this->scope === 'public_use') {
@@ -173,6 +182,13 @@ class Tag extends Model implements HasMedia, Wireable
     public static function getRoot()
     {
         return Tag::whereNull('parent_id')->first();
+    }
+
+    public static function getUsable($player)
+    {
+        return Tag::all()->filter(function ($tag) use ($player) {
+            return $tag->canUse($player);
+        });
     }
 
     public static function getTree()
@@ -238,8 +254,21 @@ class Tag extends Model implements HasMedia, Wireable
     public static function getTopMostAdminedTags($player)
     {
         return Tag::getHighestUniqueParentsWithPredicate($player, function ($tag, $player) {
-            // return $tag->canAdmin($player);
             return $tag->admins->contains($player);
+        });
+    }
+
+    public static function getTopMostUsableTags($player)
+    {
+        return Tag::getHighestUniqueParentsWithPredicate($player, function ($tag, $player) {
+            return $tag->canUse($player);
+        });
+    }
+
+    public static function getTopMostVisibleTags($player)
+    {
+        return Tag::getHighestUniqueParentsWithPredicate($player, function ($tag, $player) {
+            return $tag->canSee($player);
         });
     }
 
@@ -277,5 +306,70 @@ class Tag extends Model implements HasMedia, Wireable
     public function setAdmin($player)
     {
         $this->admins()->attach($player);
+    }
+
+    public function getAncestors()
+    {
+        $ancestors = [];
+        $tag = $this;
+        while ($tag->parent !== null) {
+            $tag = $tag->parent;
+            $ancestors[] = $tag;
+        }
+        return $ancestors;
+    }
+
+    public function getDescendants()
+    {
+        $descendants = [];
+        $toSearch = $this->children->all();
+        while (count($toSearch) > 0) {
+            $tag = array_pop($toSearch);
+            $descendants[] = $tag;
+            $toSearch = array_merge($toSearch, $tag->children->all());
+        }
+        return $descendants;
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'parent_id');
+    }
+
+    public function canUse($player)
+    {
+        if ($this->scope === 'public_use') {
+            return true;
+        }
+        $canChildrenUse = $this->children
+            ->map(function ($child) use ($player) {
+                return $child->canUse($player);
+            })
+            ->contains(true);
+        return $this->users->contains($player) || $this->canAdmin($player) || $canChildrenUse;
+    }
+
+    public function usableTags()
+    {
+        if (!auth()->user()) {
+            return $this->tags()->where('scope', 'public_use');
+        }
+        $user = auth()->user();
+        $player = $user->player;
+        return $this->tags()->where(function ($query) use ($player) {
+            $query
+                ->where('scope', 'public_use')
+                ->orWhereHas('users', function ($query) use ($player) {
+                    $query->where('player_id', $player->id);
+                })
+                ->orWhereHas('admins', function ($query) use ($player) {
+                    $query->where('player_id', $player->id);
+                });
+        });
+    }
+
+    public function callbacks()
+    {
+        return $this->hasMany(TagCallback::class);
     }
 }

@@ -79,7 +79,7 @@ new class extends Component {
 };
 ?>
 
-<div>
+<div x-cloak>
     @if ($selectedPlayer)
         <div class="p-4 bg-neutral-800 rounded-lg text-gray-200 shadow">
             <div class="flex items-center justify-between">

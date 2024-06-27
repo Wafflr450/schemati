@@ -4,7 +4,7 @@ use App\Models\Schematic;
 use function Laravel\Folio\name;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\RichEditor;
+use AmidEsfahani\FilamentTinyEditor\TinyEditor;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Components\Actions\Action;
@@ -13,6 +13,10 @@ use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use App\Models\Player;
 use Illuminate\Support\Str;
+
+use Filament\Forms\Components\Select;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
+use App\Models\Tag;
 
 use App\Forms\Components\SchematicPreviewRenderer;
 use Livewire\Volt\Component;
@@ -78,6 +82,18 @@ new class extends Component implements HasForms {
         return $form
             ->schema([
                 Wizard::make([
+                    Wizard\Step::make('Tags')
+                        ->schema([
+                            SelectTree::make('tags')
+                                ->model(Tag::class)
+                                ->label('Select Tags')
+                                ->enableBranchNode()
+                                ->direction('bottom')
+                                ->searchable()
+                                ->relationship(relationship: 'usableTags', titleAttribute: 'name', parentAttribute: 'parent_id')
+                                ->placeholder('Choose tags for your schematic'),
+                        ])
+                        ->icon('heroicon-o-tag'),
                     Wizard\Step::make('Preview')
                         ->schema([
                             SchematicPreviewRenderer::make('schematicPreview')
@@ -92,9 +108,18 @@ new class extends Component implements HasForms {
                         ])
                         ->icon('heroicon-o-camera'),
                     Wizard\Step::make('Details')
-                        ->schema([TextInput::make('title')->required()->label('Schematic Title')->placeholder('Enter a title for your schematic'), RichEditor::make('description')->required()->label('Description')->placeholder('Provide a detailed description of your schematic')])
+                        ->schema([
+                            TextInput::make('title')
+
+                                ->required()
+                                ->label('Schematic Title')
+                                ->placeholder('Enter a title for your schematic'),
+                            //RichEditor::make('description')->required()->label('Description')->placeholder('Provide a detailed description of your schematic'),
+                            TinyEditor::make('description')->profile('default|simple|full|minimal|none|custom')->columnSpan('full')->required()->fileAttachmentsDisk('s3')->required()->label('Description')->placeholder('Provide a detailed description of your schematic'),
+                        ])
                         ->icon('heroicon-o-pencil'),
                 ])
+
                     ->nextAction(
                         fn(Action $action) => $action->label('Next step')->extraAttributes([
                             'class' => 'bg-primary-600 hover:bg-primary-700',
@@ -126,6 +151,11 @@ new class extends Component implements HasForms {
                 }
             }
 
+            // Attach tags
+            if (isset($this->data['tags']) && is_array($this->data['tags'])) {
+                $schematic->tags()->attach($this->data['tags']);
+            }
+
             $schematic = Schematic::find($schematicUUID);
             $schematic
                 ->addMediaFromBase64($this->schematicBase64)
@@ -143,6 +173,7 @@ new class extends Component implements HasForms {
             $schematic = Schematic::find($schematicUUID);
             if ($schematic) {
                 $schematic->authors()->detach();
+                $schematic->tags()->detach();
                 $schematic->delete();
             }
             $schematic->clearMediaCollection('schematic');
@@ -164,10 +195,10 @@ new class extends Component implements HasForms {
     @volt
         <div class="max-w-7xl mx-auto pt-4">
             <form wire:submit.prevent="create">
-                <div class="bg-neutral overflow-hidden shadow-xl sm:rounded-lg p-4">
+                <div class="bg-neutral  shadow-xl sm:rounded-lg p-4">
                     <div class="flex items-center justify-between">
                         <div class="p-4">
-                            <h1 class="font-semibold text-xl text-white dark:text-gray-200 leading-tight p-0 m-0">
+                            <h1 class="font-semibold text-xl text-white  leading-tight p-0 m-0">
                                 Upload Schematic
                             </h1>
                             <span class="text-gray-200 text-sm">

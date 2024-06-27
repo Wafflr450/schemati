@@ -26,10 +26,12 @@
                             class="w-8 h-8 rounded-full m-1">
                     @endforeach
                 </div>
-                <span
-                    class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
-                    tags-tbd
-                </span>
+                @foreach ($schematic->tags as $tag)
+                    <span class=" text-xs font-semibold px-2.5 py-0.5 rounded ms-3"
+                        style="background-color: {{ $tag->color !== null ? $tag->color : '#f1f5f9' }}; color: {{ $tag->text_color !== null ? $tag->text_color : '#1e293b' }}">
+                        {{ $tag->name }}
+                    </span>
+                @endforeach
             </div>
 
         </div>

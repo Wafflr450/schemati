@@ -10,6 +10,7 @@ use App\Models\Tag;
 new class extends Component {
     public $tag;
 
+    #[Reactive]
     public $tagId;
 
     public $selectedAdmins = [];
@@ -21,6 +22,9 @@ new class extends Component {
 
     public function mount()
     {
+        if (!$this->tagId) {
+            return;
+        }
         $this->tag = Tag::find($this->tagId);
         $this->selectedAdmins = $this->tag->admins()->pluck('id')->toArray();
         $this->selectedUsers = $this->tag->users()->pluck('id')->toArray();
@@ -64,18 +68,25 @@ new class extends Component {
         $this->syncRoles();
     }
 
+    #[On('node-selected')]
+    public function handleSelectedNode($nodeId)
+    {
+        $this->tagId = $nodeId;
+        $this->mount();
+    }
+
     #[On('node-updated')]
     public function handleNodeUpdated($nodeId)
     {
-        //dd($nodeId);
-        //$this->tag = $this->tag->fresh();
+        $this->tagId = $nodeId;
+        $this->mount();
     }
 };
 ?>
 
 <div class="pt-4">
     <h2 class="text-2xl font-semibold text-gray-200">Player Tag Permission Manager for {{ $tag->name }}</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="mt-4 space-y-4">
         <div class="space-y-2">
             <label class="block text-sm font-semibold text-gray-200">Admins</label>
             <ul class="bg-neutral-800 rounded-lg space-y-2">
@@ -158,8 +169,8 @@ new class extends Component {
     </div>
 
     <!-- Player Search Modal -->
-    <div x-data="{ open: @entangle('showSearch') }" x-show="open" class="fixed z-20 inset-0 overflow-y-auto" aria-labelledby="modal-title"
-        role="dialog" aria-modal="true">
+    <div x-data="{ open: @entangle('showSearch') }" x-cloak x-show="open" class="fixed z-20 inset-0 overflow-y-auto"
+        aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div x-show="open" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true">
             </div>

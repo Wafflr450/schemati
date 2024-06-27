@@ -94,4 +94,9 @@ class Schematic extends Model implements HasMedia
         }
         return str_replace('minio', 'localhost', $firstMedia);
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }

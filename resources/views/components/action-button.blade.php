@@ -9,7 +9,7 @@
 @endphp
 
 <button
-    {{ $attributes->merge(['class' => "inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-lg shadow-md  $gradientClasses transition duration-150 ease-in-out transform hover:scale-[1.02] active:scale-[0.99] $textColor"]) }}>
+    {{ $attributes->merge(['class' => "inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-lg shadow-md  $gradientClasses transition duration-150 ease-in-out transform hover:scale-[1.05] active:scale-[0.99] $textColor"]) }}>
     @if ($icon)
         <i class="fas fa-{{ $icon }}"></i>
     @endif

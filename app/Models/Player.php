@@ -51,12 +51,22 @@ class Player extends Model
 
     public function schematics()
     {
-        return $this->belongsToMany(Schematic::class, 'users_schematics');
+        return $this->belongsToMany(Schematic::class, 'players_schematics');
     }
 
     public function getTopMostAdminTagsAttribute()
     {
         return Tag::getTopMostAdminedTags($this);
+    }
+
+    public function getTopMostUsableTagsAttribute()
+    {
+        return Tag::getTopMostUsableTags($this);
+    }
+
+    public function getTopMostVisibleTagsAttribute()
+    {
+        return Tag::getTopMostVisibleTags($this);
     }
 
     public function getUsableTagsAttribute()
