@@ -6,10 +6,15 @@ use App\Http\Requests\PasswordSetRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * @tags User
+ */
 class PasswordSet extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Set a user's password
+     *
+     * This endpoint is used to set a user's password.
      */
     public function __invoke(PasswordSetRequest $request)
     {

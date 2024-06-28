@@ -9,10 +9,15 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use App\Utils\CommonUtils;
 
+/**
+ * @tags Schematic
+ */
 class SchematicUpload extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Schematic Temporary Upload
+        *
+        * This endpoint is used to temporarily upload a schematic file.
      */
     public function __invoke(SchematicUploadRequest $request)
     {

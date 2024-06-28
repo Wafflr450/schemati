@@ -12,10 +12,13 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Schematic;
 use App\Models\Player;
 
+/**
+ * @tags Schematic
+ */
 class SchematicCreate extends Controller
 {
     /**
-     * Handle the incoming request.
+     * ( Deprecated ) Schematic Create
      */
     public function __invoke(SchematicCreateRequest $request)
     {

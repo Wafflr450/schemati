@@ -34,12 +34,10 @@ Route::prefix('v1')->group(function () {
         });
     }
     Route::middleware('ensure_valid_jwt')->group(function () {
-        Route::get('/test', function () {
-            return response()->json(['message' => 'Hello World!'], 200);
+        Route::prefix('schematic')->group(function () {
+            Route::post('/create', SchematicCreate::class);
+            Route::post('/upload', SchematicUpload::class);
         });
-
-        Route::post('/schematic', SchematicCreate::class);
-        Route::post('/schematic-upload', SchematicUpload::class);
     });
 
     Route::middleware('ensure_valid_jwt:canManagePassword')->group(function () {

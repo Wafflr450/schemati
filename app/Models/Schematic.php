@@ -16,7 +16,7 @@ class Schematic extends Model implements HasMedia
     use InteractsWithMedia;
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'id'];
+    protected $fillable = ['name', 'description', 'id', 'is_public'];
 
     protected $casts = [
         'id' => 'string',

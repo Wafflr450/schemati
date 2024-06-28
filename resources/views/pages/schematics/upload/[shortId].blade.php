@@ -4,6 +4,7 @@ use App\Models\Schematic;
 use function Laravel\Folio\name;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use AmidEsfahani\FilamentTinyEditor\TinyEditor;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -110,12 +111,14 @@ new class extends Component implements HasForms {
                     Wizard\Step::make('Details')
                         ->schema([
                             TextInput::make('title')
-
                                 ->required()
                                 ->label('Schematic Title')
                                 ->placeholder('Enter a title for your schematic'),
-                            //RichEditor::make('description')->required()->label('Description')->placeholder('Provide a detailed description of your schematic'),
                             TinyEditor::make('description')->profile('default|simple|full|minimal|none|custom')->columnSpan('full')->required()->fileAttachmentsDisk('s3')->required()->label('Description')->placeholder('Provide a detailed description of your schematic'),
+                            Toggle::make('isPublic')
+                                ->label('Public')
+                                ->default(false)
+                                ->hint('Make your schematic public so others can view and download it'),
                         ])
                         ->icon('heroicon-o-pencil'),
                 ])
@@ -193,22 +196,22 @@ new class extends Component implements HasForms {
 
 <x-app-layout>
     @volt
-        <div class="max-w-7xl mx-auto pt-4">
-            <form wire:submit.prevent="create">
-                <div class="bg-neutral  shadow-xl sm:rounded-lg p-4">
-                    <div class="flex items-center justify-between">
-                        <div class="p-4">
-                            <h1 class="font-semibold text-xl text-white  leading-tight p-0 m-0">
-                                Upload Schematic
-                            </h1>
-                            <span class="text-gray-200 text-sm">
-                                {{ $shortId }}
-                            </span>
-                        </div>
+    <div class="pt-4 mx-auto max-w-7xl">
+        <form wire:submit.prevent="create">
+            <div class="p-4 shadow-xl bg-neutral sm:rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div class="p-4">
+                        <h1 class="p-0 m-0 text-xl font-semibold leading-tight text-white">
+                            Upload Schematic
+                        </h1>
+                        <span class="text-sm text-gray-200">
+                            {{ $shortId }}
+                        </span>
                     </div>
-                    {{ $this->form }}
                 </div>
-            </form>
-        </div>
+                {{ $this->form }}
+            </div>
+        </form>
+    </div>
     @endvolt
 </x-app-layout>

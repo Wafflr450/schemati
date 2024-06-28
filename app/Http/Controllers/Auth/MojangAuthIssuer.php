@@ -7,11 +7,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\MojangAuthIssuerRequest;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * @tags Auth
+ */
 class MojangAuthIssuer extends Controller
 {
     /**
-     * Handle the incoming request.
-     */
+    * Mojang Auth Issuer
+    *
+    * The Mojang Auth Issuer endpoint is used to authenticate a user using their Mojang account from a Minecraft client.
+    */
     public function __invoke(MojangAuthIssuerRequest $request)
     {
         $response = Http::get("https://sessionserver.mojang.com/session/minecraft/hasJoined?username={$request->username}&serverId={$request->serverId}");

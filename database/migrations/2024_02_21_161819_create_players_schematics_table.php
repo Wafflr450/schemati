@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('players_schematics', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('role')->nullable()->default("creator");
             $table->foreignUuid('player_id')->references('id')->on('players')->onDelete('cascade');
             $table->foreignUuid('schematic_id')->references('id')->on('schematics')->onDelete('cascade');
         });
