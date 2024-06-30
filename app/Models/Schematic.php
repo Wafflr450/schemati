@@ -9,6 +9,8 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Models\Player;
 
+use App\Utils\CommonUtils;
+
 use Illuminate\Support\Facades\Storage;
 
 class Schematic extends Model implements HasMedia
@@ -31,20 +33,53 @@ class Schematic extends Model implements HasMedia
             if (empty($schematic->id)) {
                 $schematic->id = Str::uuid();
             }
+            if (empty($schematic->short_id)) {
+                $schematic->short_id = self::generateUniqueShortId($schematic->id);
+            }
+            if (empty($schematic->slug)) {
+                $schematic->slug = self::generateUniqueSlug($schematic->name);
+            }
+        });
+
+        static::saving(function ($schematic) {
+            if ($schematic->isDirty('name') && empty($schematic->slug)) {
+                $schematic->slug = self::generateUniqueSlug($schematic->name);
+            }
         });
 
         static::deleting(function ($schematic) {
             info('deleting');
-            $schematic->clearMediaCollection('schematics');
+            $schematic->clearMediaCollection('schematic');
             $schematic->clearMediaCollection('preview_video');
             $schematic->clearMediaCollection('preview_image');
             info('deleted');
         });
     }
 
+    protected static function generateUniqueShortId($input, $length = 6)
+    {
+        $shortId = CommonUtils::smallHash($input, $length);
+        while (self::where('short_id', $shortId)->exists()) {
+            $length++;
+            $shortId = CommonUtils::smallHash($input, $length);
+        }
+        return $shortId;
+    }
+
+    protected static function generateUniqueSlug($name)
+    {
+        $slug = Str::slug($name);
+        $count = 2;
+        while (self::where('slug', $slug)->exists()) {
+            $slug = Str::slug($name) . '-' . $count;
+            $count++;
+        }
+        return $slug;
+    }
+
     public function getDownloadLinkAttribute()
     {
-        $link = $this->getFirstMediaUrl('schematics');
+        $link = $this->getFirstMediaUrl('schematic');
         return str_replace('minio', 'localhost', $link);
     }
 
@@ -98,5 +133,10 @@ class Schematic extends Model implements HasMedia
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'short_id';
     }
 }

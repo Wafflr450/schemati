@@ -33,6 +33,8 @@
         </div>
     </div>
 
+    <x-login-modal />
+    <x-register-modal />
     <livewire:toasts />
 
     <x-banner />

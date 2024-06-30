@@ -2,20 +2,34 @@
 
 namespace App\Http\Requests\Schematic;
 
-use Illuminate\Http\Response;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Response;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
-use App\Rules\CommaSeperatedUUID;
+use App\Rules\SchematicIdRule;
 
-class SchematicUploadRequest extends FormRequest
+class SchematicDownloadRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return true; // Assuming anyone can download schematics
+    }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        // If 'id' is not in the request (POST data), but it's in the route parameters (GET),
+        // add it to the request data
+        if (!$this->has('id') && $this->route('id')) {
+            $this->merge(['id' => $this->route('id')]);
+        }
     }
 
     /**
@@ -26,8 +40,8 @@ class SchematicUploadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'schematic' => 'required|file|mimetypes:application/gzip|max:10240',
-            'author' => 'required|string|uuid',
+            'id' => ['required', 'string', new SchematicIdRule()],
+            'format' => 'sometimes|in:schem,schematic',
         ];
     }
 

@@ -274,19 +274,9 @@ class Tag extends Model implements HasMedia, Wireable
 
     public static function getAdminedTags($player)
     {
-        $topMostAdminedTags = Tag::getTopMostAdminedTags($player);
-        $allAdminedTags = [];
-        addAllChildren($topMostAdminedTags);
-
-        function addAllChildren($tags)
-        {
-            foreach ($tags as $tag) {
-                $allAdminedTags[] = $tag;
-                addAllChildren($tag->children);
-            }
-        }
-
-        return $allAdminedTags;
+        return Tag::getTagsWithPredicate($player, function ($tag, $player) {
+            return $tag->canAdmin($player);
+        });
     }
 
     public static function getUsableTags($player)

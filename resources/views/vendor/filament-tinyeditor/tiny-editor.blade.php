@@ -20,23 +20,10 @@
             directionality: '{{ $getDirection() }}',
             max_height: {{ $getMaxHeight() }},
             min_height: {{ $getMinHeight() }},
-            @if (!filament()->hasDarkModeForced() && $darkMode() == 'media') skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
-			content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
-			@elseif(!filament()->hasDarkModeForced() && $darkMode() == 'class')
-			skin: (document.querySelector('html').getAttribute('class').includes('dark') ? 'oxide-dark' : 'oxide'),
-			content_css: (document.querySelector('html').getAttribute('class').includes('dark') ? 'dark' : 'default'),
-			@elseif(filament()->hasDarkModeForced() || $darkMode() == 'force')
-			skin: 'oxide-dark',
-			content_css: 'dark',
-			@elseif(!filament()->hasDarkModeForced() && $darkMode() == false)
-			skin: 'oxide',
-			content_css: 'default',
-			@elseif(!filament()->hasDarkModeForced() && $darkMode() == 'custom')
-			skin: '{{ $skinsUI() }}',
-			content_css: '{{ $skinsContent() }}',
-			@else
-			skin: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'oxide-dark' : 'oxide',
-			content_css: ((localStorage.getItem('theme') ?? 'system') == 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) ? 'dark' : 'default', @endif
+        
+            skin: 'oxide-dark',
+            content_css: 'dark',
+        
             toolbar_sticky: {{ $getToolbarSticky() ? 'true' : 'false' }},
             templates: '{{ $getTemplates() }}',
             menubar: {{ $getShowMenuBar() ? 'true' : 'false' }},

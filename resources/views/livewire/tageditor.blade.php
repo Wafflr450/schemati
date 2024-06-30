@@ -16,6 +16,9 @@ new class extends Component {
 
     public function mount()
     {
+        if (!auth()->check()) {
+            return redirect()->route('index')->with('error', 'You must be logged in to access this page.');
+        }
         $this->player = auth()->user()->player;
         $rootNodes = $this->player->topMostAdminTags;
         $this->rootNodeIds = array_map(fn($node) => $node->id, $rootNodes);

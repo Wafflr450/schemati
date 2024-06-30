@@ -6,6 +6,7 @@ use App\Helpers\JWT;
 
 use App\Http\Controllers\Schematic\SchematicCreate;
 use App\Http\Controllers\Schematic\SchematicUpload;
+use App\Http\Controllers\Schematic\SchematicDownload;
 use App\Http\Controllers\PasswordSet;
 use App\Http\Controllers\PasswordSetSession;
 use App\Models\Schematic;
@@ -37,6 +38,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('schematic')->group(function () {
             Route::post('/create', SchematicCreate::class);
             Route::post('/upload', SchematicUpload::class);
+            Route::match(['get', 'post'], '/download/{id?}', SchematicDownload::class);
         });
     });
 

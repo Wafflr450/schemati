@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class CommonUtils
 {
@@ -11,13 +12,15 @@ class CommonUtils
         return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid);
     }
 
-    public static function smallHash(string $input, int $length = 8): string
+    public static function smallHash(string $input, int $length = 6): string
     {
-        return substr(md5($input), 0, $length);
+        $base64 = base64_encode(md5($input, true));
+        $base64url = strtr($base64, '+/', '-_');
+        return substr($base64url, 0, $length);
     }
 
     public static function randomString(int $length = 8): string
     {
-        return substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', $length)), 0, $length);
+        return Str::random($length);
     }
 }

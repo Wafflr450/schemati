@@ -54,6 +54,16 @@ class Player extends Model
         return $this->belongsToMany(Schematic::class, 'players_schematics');
     }
 
+    public function getAdminedTagsAttribute()
+    {
+        return Tag::getAdminedTags($this);
+    }
+
+    public function getIsTagAdminAttribute()
+    {
+        return count($this->adminedTags) > 0;
+    }
+
     public function getTopMostAdminTagsAttribute()
     {
         return Tag::getTopMostAdminedTags($this);

@@ -1,21 +1,27 @@
 @php
     $links = [
-        [
-            'name' => 'UI',
-            'href' => '/ui',
-            'current' => true,
-        ],
-        [
-            'name' => 'Tag Editor',
-            'href' => '/tag-editor',
-            'current' => false,
-        ],
+        //[
+        //    'name' => 'UI',
+        //    'href' => '/ui',
+        //    'current' => true,
+        //],
         [
             'name' => 'Schematics',
             'href' => '/schematics',
             'current' => false,
         ],
     ];
+
+    if (Auth::check()) {
+        $player = Auth::user()->player;
+        if ($player->is_tag_admin) {
+            $links[] = [
+                'name' => 'Tag Editor',
+                'href' => '/tag-editor',
+                'current' => false,
+            ];
+        }
+    }
 @endphp
 
 
@@ -67,11 +73,24 @@
                     </button>
                 </div>
             @else
-                <a href="{{ route('login') }}"
-                    class="text-sm text-gray-700 rounded-lg md:bg-transparent md:text-blue-700 md:p-2 dark:text-white">{{ __('Log in') }}</a>
-                <a href="{{ route('register') }}"
-                    class="text-sm text-gray-700 rounded-lg md:bg-transparent md:text-blue-700 md:p-2 dark:text-white">{{ __('Register') }}</a>
-
+                {{--  <a href="{{ route('login') }}"
+                    class="text-sm text-gray-700 rounded-lg md:bg-transparent md:text-blue-700 md:p-2 dark:text-white">{{ __('Log in') }}</a>  --}}
+                <a x-data x-on:click="$dispatch('login-modal')"
+                    class="block py-2 pr-4 pl-3 text-gray-700 rounded  md:p-0 text-white hover:text-pink-500 mr-2 cursor-pointer">
+                    {{-- <div class="hidden mr-2 sm:inline-block">
+                            <i class="fas fa-sign-in-alt "></i>
+                        </div>  --}}
+                    Login
+                </a>
+                {{--  <a href="{{ route('register') }}"
+                    class="text-sm text-gray-700 rounded-lg md:bg-transparent md:text-blue-700 md:p-2 dark:text-white">{{ __('Register') }}</a>  --}}
+                <a x-data x-on:click="$dispatch('register-modal')"
+                    class="block py-2 pr-4 pl-3 text-gray-700 rounded  md:p-0 text-white hover:text-pink-500 cursor-pointer">
+                    {{-- <div class="hidden mr-2 sm:inline-block">
+                            <i class="fas fa-user-plus "></i>
+                        </div>  --}}
+                    Register
+                </a>
             @endauth
             <button data-collapse-toggle="mobile-menu" type="button"
                 class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"

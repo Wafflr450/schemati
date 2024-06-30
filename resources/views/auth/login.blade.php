@@ -1,7 +1,7 @@
 <x-app-layout>
-    <div class="flex justify-center items-center min-h-screen text-white bg-base-100">
+    <div class="flex justify-center items-center min-h-screen text-white bg-neutral-950">
         <div class="w-full max-w-md">
-            <div class="bg-base-200 p-8 rounded-lg shadow-xl">
+            <div class="bg-neutral-200 p-8 rounded-lg shadow-xl">
                 <h2 class="font-bold text-2xl text-white mb-4">Login</h2>
                 <x-validation-errors class="mb-4" />
                 @if (session('status'))

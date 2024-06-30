@@ -83,18 +83,6 @@ new class extends Component implements HasForms {
         return $form
             ->schema([
                 Wizard::make([
-                    Wizard\Step::make('Tags')
-                        ->schema([
-                            SelectTree::make('tags')
-                                ->model(Tag::class)
-                                ->label('Select Tags')
-                                ->enableBranchNode()
-                                ->direction('bottom')
-                                ->searchable()
-                                ->relationship(relationship: 'usableTags', titleAttribute: 'name', parentAttribute: 'parent_id')
-                                ->placeholder('Choose tags for your schematic'),
-                        ])
-                        ->icon('heroicon-o-tag'),
                     Wizard\Step::make('Preview')
                         ->schema([
                             SchematicPreviewRenderer::make('schematicPreview')
@@ -109,18 +97,20 @@ new class extends Component implements HasForms {
                         ])
                         ->icon('heroicon-o-camera'),
                     Wizard\Step::make('Details')
-                        ->schema([
-                            TextInput::make('title')
-                                ->required()
-                                ->label('Schematic Title')
-                                ->placeholder('Enter a title for your schematic'),
-                            TinyEditor::make('description')->profile('default|simple|full|minimal|none|custom')->columnSpan('full')->required()->fileAttachmentsDisk('s3')->required()->label('Description')->placeholder('Provide a detailed description of your schematic'),
-                            Toggle::make('isPublic')
-                                ->label('Public')
-                                ->default(false)
-                                ->hint('Make your schematic public so others can view and download it'),
-                        ])
+                        ->schema([TextInput::make('title')->required()->label('Schematic Title')->placeholder('Enter a title for your schematic'), TinyEditor::make('description')->profile('default|simple|full|minimal|none|custom')->columnSpan('full')->required()->fileAttachmentsDisk('s3')->required()->label('Description')->placeholder('Provide a detailed description of your schematic'), Toggle::make('isPublic')->label('Public')->default(false)->hint('Make your schematic public so others can view and download it')])
                         ->icon('heroicon-o-pencil'),
+                    Wizard\Step::make('Tags')
+                        ->schema([
+                            SelectTree::make('tags')
+                                ->model(Tag::class)
+                                ->label('Select Tags')
+                                ->enableBranchNode()
+                                ->direction('bottom')
+                                ->searchable()
+                                ->relationship(relationship: 'usableTags', titleAttribute: 'name', parentAttribute: 'parent_id')
+                                ->placeholder('Choose tags for your schematic'),
+                        ])
+                        ->icon('heroicon-o-tag'),
                 ])
 
                     ->nextAction(
@@ -196,22 +186,22 @@ new class extends Component implements HasForms {
 
 <x-app-layout>
     @volt
-    <div class="pt-4 mx-auto max-w-7xl">
-        <form wire:submit.prevent="create">
-            <div class="p-4 shadow-xl bg-neutral sm:rounded-lg">
-                <div class="flex items-center justify-between">
-                    <div class="p-4">
-                        <h1 class="p-0 m-0 text-xl font-semibold leading-tight text-white">
-                            Upload Schematic
-                        </h1>
-                        <span class="text-sm text-gray-200">
-                            {{ $shortId }}
-                        </span>
+        <div class="pt-4 mx-auto max-w-7xl">
+            <form wire:submit.prevent="create">
+                <div class="p-4 shadow-xl bg-neutral sm:rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div class="p-4">
+                            <h1 class="p-0 m-0 text-xl font-semibold leading-tight text-white">
+                                Upload Schematic
+                            </h1>
+                            <span class="text-sm text-gray-200">
+                                {{ $shortId }}
+                            </span>
+                        </div>
                     </div>
+                    {{ $this->form }}
                 </div>
-                {{ $this->form }}
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
     @endvolt
 </x-app-layout>
