@@ -14,105 +14,115 @@ use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use App\Models\Player;
 use Illuminate\Support\Str;
-
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use App\Models\Tag;
-
 use App\Forms\Components\SchematicPreviewRenderer;
 use Livewire\Volt\Component;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Auth;
+
 name('schematics.submit');
 
 new class extends Component implements HasForms {
     use InteractsWithForms;
+    use WithFileUploads;
 
     public $shortId;
     public $schematicBase64;
     public $author;
     public ?array $data = [];
+    public $schematicFile;
 
     public function mount($shortId)
     {
-        $cacheKey = Cache::get("schematic-temporary-short-links:{$shortId}");
-        if ($cacheKey == null || strlen($cacheKey) === 0) {
-            session()->flash('error', 'The schematic you are trying to upload is not valid.');
-            $this->redirect('/schematics');
-            return;
-        }
-
-        $author = explode(':', $cacheKey)[1];
-        if ($author) {
-            $this->author = $author;
-            info('Author is set to: ' . $author);
+        if ($shortId === 'new') {
+            if (!Auth::check()) {
+                session()->flash('error', 'You must be logged in to upload a new schematic.');
+                $this->redirect('/login');
+                return;
+            }
+            $this->author = Auth::user()->player->id;
         } else {
-            session()->flash('error', 'The schematic you are trying to upload is not valid.');
-            $this->redirect('/schematics');
-            return;
+            $cacheKey = Cache::get("schematic-temporary-short-links:{$shortId}");
+            if ($cacheKey == null || strlen($cacheKey) === 0) {
+                session()->flash('error', 'The schematic you are trying to upload is not valid.');
+                $this->redirect('/schematics');
+                return;
+            }
+
+            $author = explode(':', $cacheKey)[1];
+            if ($author) {
+                $this->author = $author;
+            } else {
+                session()->flash('error', 'The schematic you are trying to upload is not valid.');
+                $this->redirect('/schematics');
+                return;
+            }
+            $schematicFile = Cache::get($cacheKey);
+            $this->schematicBase64 = base64_encode($schematicFile);
         }
-        $schematicFile = Cache::get($cacheKey);
-        $this->schematicBase64 = base64_encode($schematicFile);
+
+        $this->shortId = $shortId;
         $this->form->fill();
-    }
-
-    protected function getRedirectUrl(): ?string
-    {
-        return static::getResource()::getUrl('index') . '/schematics/';
-    }
-
-    public function messages(): array
-    {
-        return [
-            'data.schematicPreview.webm.required' => 'The schematic preview must include a webm file.',
-            'data.schematicPreview.png.required' => 'The schematic preview must include a png file.',
-        ];
-    }
-
-    public function rules(): array
-    {
-        return [
-            'data.title' => ['required'],
-            'data.description' => ['required'],
-            'data.schematicPreview' => ['required', 'array', 'size:2'],
-            'data.schematicPreview.webm' => ['required', 'string'],
-            'data.schematicPreview.png' => ['required', 'string'],
-        ];
     }
 
     public function form(Form $form): Form
     {
+        $steps = [
+            Wizard\Step::make('Preview')
+                ->schema([
+                    SchematicPreviewRenderer::make('schematicPreview')
+                        ->viewData([
+                            'schematicBase64' => $this->schematicBase64,
+                            'schematicId' => $this->shortId,
+                        ])
+                        ->required()
+                        ->rules(['required', 'array', 'size:2'])
+                        ->label('Schematic Preview')
+                        ->hint('Upload a preview image and video for your schematic'),
+                ])
+                ->icon('heroicon-o-camera'),
+            Wizard\Step::make('Details')
+                ->schema([TextInput::make('title')->required()->label('Schematic Title')->placeholder('Enter a title for your schematic'), TinyEditor::make('description')->profile('default|simple|full|minimal|none|custom')->columnSpan('full')->required()->fileAttachmentsDisk('s3')->required()->label('Description')->placeholder('Provide a detailed description of your schematic'), Toggle::make('isPublic')->label('Public')->default(false)->hint('Make your schematic public so others can view and download it')])
+                ->icon('heroicon-o-pencil'),
+            Wizard\Step::make('Tags')
+                ->schema([
+                    SelectTree::make('tags')
+                        ->model(Tag::class)
+                        ->label('Select Tags')
+                        ->enableBranchNode()
+                        ->direction('bottom')
+                        ->searchable()
+                        ->relationship(relationship: 'usableTags', titleAttribute: 'name', parentAttribute: 'parent_id')
+                        ->placeholder('Choose tags for your schematic'),
+                ])
+                ->icon('heroicon-o-tag'),
+        ];
+
+        if ($this->shortId === 'new') {
+            array_unshift(
+                $steps,
+                Wizard\Step::make('Upload')
+                    ->schema([
+                        FileUpload::make('schematicFile')
+                            ->label('Upload Schematic')
+                            ->maxSize(10240) // 10MB
+                            ->required()
+                            ->helperText('Upload a .schem file (gzip compressed)')
+                            ->afterStateUpdated(function ($state) {
+                                if ($state) {
+                                    $this->updateSchematicBase64($state);
+                                }
+                            }),
+                    ])
+                    ->icon('heroicon-o-arrow-up-tray'),
+            );
+        }
+
         return $form
             ->schema([
-                Wizard::make([
-                    Wizard\Step::make('Preview')
-                        ->schema([
-                            SchematicPreviewRenderer::make('schematicPreview')
-                                ->viewData([
-                                    'schematicBase64' => $this->schematicBase64,
-                                    'schematicId' => $this->shortId,
-                                ])
-                                ->required()
-                                ->rules(['required', 'array', 'size:2'])
-                                ->label('Schematic Preview')
-                                ->hint('Upload a preview image and video for your schematic'),
-                        ])
-                        ->icon('heroicon-o-camera'),
-                    Wizard\Step::make('Details')
-                        ->schema([TextInput::make('title')->required()->label('Schematic Title')->placeholder('Enter a title for your schematic'), TinyEditor::make('description')->profile('default|simple|full|minimal|none|custom')->columnSpan('full')->required()->fileAttachmentsDisk('s3')->required()->label('Description')->placeholder('Provide a detailed description of your schematic'), Toggle::make('isPublic')->label('Public')->default(false)->hint('Make your schematic public so others can view and download it')])
-                        ->icon('heroicon-o-pencil'),
-                    Wizard\Step::make('Tags')
-                        ->schema([
-                            SelectTree::make('tags')
-                                ->model(Tag::class)
-                                ->label('Select Tags')
-                                ->enableBranchNode()
-                                ->direction('bottom')
-                                ->searchable()
-                                ->relationship(relationship: 'usableTags', titleAttribute: 'name', parentAttribute: 'parent_id')
-                                ->placeholder('Choose tags for your schematic'),
-                        ])
-                        ->icon('heroicon-o-tag'),
-                ])
-
+                Wizard::make($steps)
                     ->nextAction(
                         fn(Action $action) => $action->label('Next step')->extraAttributes([
                             'class' => 'bg-primary-600 hover:bg-primary-700',
@@ -123,11 +133,17 @@ new class extends Component implements HasForms {
             ->statePath('data');
     }
 
+    public function updateSchematicBase64($state)
+    {
+        $filePath = $state->getRealPath();
+        $this->schematicBase64 = base64_encode(file_get_contents($filePath));
+        $this->dispatch('updateSchematicBase64', $this->schematicBase64);
+    }
+
     public function create()
     {
         $this->validate();
         $schematicUUID = Str::uuid();
-        $authors = explode(',', $this->author);
 
         try {
             $schematic = new Schematic([
@@ -137,21 +153,21 @@ new class extends Component implements HasForms {
             ]);
             $schematic->save();
 
-            foreach ($authors as $author) {
-                $player = Player::firstOrCreate(['id' => $author]);
-                if ($player) {
-                    $schematic->authors()->attach($player);
-                }
-            }
+            $player = Player::findOrFail($this->author);
+            $schematic->authors()->attach($player);
 
-            // Attach tags
             if (isset($this->data['tags']) && is_array($this->data['tags'])) {
                 $schematic->tags()->attach($this->data['tags']);
             }
 
-            $schematic = Schematic::find($schematicUUID);
+            if ($this->shortId === 'new') {
+                $schematicContent = base64_decode($this->schematicBase64);
+            } else {
+                $schematicContent = base64_decode($this->schematicBase64);
+            }
+
             $schematic
-                ->addMediaFromBase64($this->schematicBase64)
+                ->addMediaFromString($schematicContent)
                 ->usingFileName($schematicUUID . '.schem')
                 ->toMediaCollection('schematic');
             $schematic
@@ -174,15 +190,18 @@ new class extends Component implements HasForms {
             $schematic->clearMediaCollection('preview_image');
             throw $e;
         }
-        $cacheKey = Cache::get("schematic-temporary-short-links:{$this->shortId}");
-        Cache::forget("schematic-temporary-short-links:{$this->shortId}");
-        Cache::forget($cacheKey);
+
+        if ($this->shortId !== 'new') {
+            $cacheKey = Cache::get("schematic-temporary-short-links:{$this->shortId}");
+            Cache::forget("schematic-temporary-short-links:{$this->shortId}");
+            Cache::forget($cacheKey);
+        }
+
         session()->flash('success', 'Schematic uploaded successfully.');
         $this->redirect('/schematics');
     }
 };
 ?>
-
 
 <x-app-layout>
     @volt

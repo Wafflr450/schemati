@@ -8,6 +8,7 @@ use App\Http\Controllers\Schematic\SchematicCreate;
 use App\Http\Controllers\Schematic\SchematicUpload;
 use App\Http\Controllers\Schematic\SchematicDownload;
 use App\Http\Controllers\PasswordSet;
+use App\Http\Controllers\ProxyController;
 use App\Http\Controllers\PasswordSetSession;
 use App\Models\Schematic;
 
@@ -23,6 +24,8 @@ use App\Http\Controllers\Auth\MojangAuthIssuer;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::get('fetch-resource-pack', [ProxyController::class, 'fetchResourcePack']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
