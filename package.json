@@ -21,6 +21,6 @@
   },
   "type": "module",
   "dependencies": {
-    "schematic-renderer": "schematic-renderer-1.0.1.tgz"
+    "schematic-renderer": "^1.0.2"
   }
 }
