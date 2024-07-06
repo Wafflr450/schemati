@@ -10,7 +10,3 @@ Alpine.plugin(ToastComponent)
 Livewire.start()
 
 window.SchematicRenderer = SchematicRenderer;
-console.log(SchematicRenderer);
-
-
-

@@ -183,11 +183,12 @@ new class extends Component implements HasForms {
             if ($schematic) {
                 $schematic->authors()->detach();
                 $schematic->tags()->detach();
+                $schematic->clearMediaCollection('schematic');
+                $schematic->clearMediaCollection('preview_video');
+                $schematic->clearMediaCollection('preview_image');
                 $schematic->delete();
             }
-            $schematic->clearMediaCollection('schematic');
-            $schematic->clearMediaCollection('preview_video');
-            $schematic->clearMediaCollection('preview_image');
+
             throw $e;
         }
 
@@ -204,23 +205,29 @@ new class extends Component implements HasForms {
 ?>
 
 <x-app-layout>
-    @volt
-        <div class="pt-4 mx-auto max-w-7xl">
-            <form wire:submit.prevent="create">
-                <div class="p-4 shadow-xl bg-neutral sm:rounded-lg">
-                    <div class="flex items-center justify-between">
-                        <div class="p-4">
-                            <h1 class="p-0 m-0 text-xl font-semibold leading-tight text-white">
-                                Upload Schematic
-                            </h1>
-                            <span class="text-sm text-gray-200">
-                                {{ $shortId }}
-                            </span>
-                        </div>
-                    </div>
-                    {{ $this->form }}
-                </div>
-            </form>
-        </div>
-    @endvolt
+ @volt
+  <div
+       class="mx-auto max-w-7xl pt-4">
+   <form
+         wire:submit.prevent="create">
+    <div
+         class="bg-neutral p-4 shadow-xl sm:rounded-lg">
+     <div
+          class="flex items-center justify-between">
+      <div class="p-4">
+       <h1
+           class="m-0 p-0 text-xl font-semibold leading-tight text-white">
+        Upload Schematic
+       </h1>
+       <span
+             class="text-sm text-gray-200">
+        {{ $shortId }}
+       </span>
+      </div>
+     </div>
+     {{ $this->form }}
+    </div>
+   </form>
+  </div>
+ @endvolt
 </x-app-layout>

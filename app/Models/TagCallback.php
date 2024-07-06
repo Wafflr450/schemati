@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Utils\WebhookUtils;
 
 class TagCallback extends Model
 {
@@ -14,7 +15,7 @@ class TagCallback extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'last_triggered_at' => 'datetime',
-        'headers' => 'array',
+        'headers' => 'json',
     ];
 
     public function tag()
@@ -22,8 +23,13 @@ class TagCallback extends Model
         return $this->belongsTo(Tag::class);
     }
 
-    public function createdByUser()
+    public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
+    public function trigger($schematic)
+    {
+        WebhookUtils::sendWebhook($this, $schematic, $this->tag);
     }
 }

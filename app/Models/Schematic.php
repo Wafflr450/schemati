@@ -12,7 +12,10 @@ use App\Models\Player;
 use App\Utils\CommonUtils;
 
 use Illuminate\Support\Facades\Storage;
+use App\Observers\SchematicObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
+#[ObservedBy([SchematicObserver::class])]
 class Schematic extends Model implements HasMedia
 {
     use InteractsWithMedia;
@@ -86,6 +89,8 @@ class Schematic extends Model implements HasMedia
     public function getFileAttribute()
     {
         $media = $this->getFirstMedia('schematic');
+        //dump the url
+        dd($media->getUrl());
         if (!$media) {
             return null;
         }
