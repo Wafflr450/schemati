@@ -90,7 +90,6 @@ class Schematic extends Model implements HasMedia
     {
         $media = $this->getFirstMedia('schematic');
         //dump the url
-        dd($media->getUrl());
         if (!$media) {
             return null;
         }

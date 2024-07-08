@@ -5,29 +5,37 @@ namespace App\Utils;
 use App\Models\TagCallback;
 use App\Models\Tag;
 use App\Models\Schematic;
-use App\Models\Player;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class WebhookUtils
 {
     public static function sendWebhook(TagCallback $callback, Schematic $schematic, Tag $tag)
     {
-        $payload = self::preparePayload($callback, $schematic, $tag);
-        $headers = $callback->headers ?? [];
-        $response = Http::withHeaders($headers)->post($callback->callback_url, $payload);
+        try {
+            $payload = self::preparePayload($callback, $schematic, $tag);
+            $headers = $callback->headers ?? [];
 
-        $callback->update(['last_triggered_at' => now()]);
+            Log::info('Sending webhook', ['url' => $callback->callback_url, 'payload' => $payload]);
 
-        return $response->successful();
+            $response = Http::withHeaders($headers)->post($callback->callback_url, $payload);
+
+            Log::info('Webhook response', ['status' => $response->status(), 'body' => $response->body()]);
+
+            $callback->update(['last_triggered_at' => now()]);
+
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error('Error sending webhook', ['error' => $e->getMessage()]);
+            return false;
+        }
     }
 
     protected static function preparePayload(TagCallback $callback, Schematic $schematic, Tag $tag)
     {
         switch ($callback->callback_format) {
             case 'discord':
-                $payload = self::prepareDiscordPayload($schematic, $tag);
-                dd($payload);
-                return $payload;
+                return self::prepareDiscordPayload($schematic, $tag);
             case 'json':
             default:
                 return self::prepareJsonPayload($schematic, $tag);
@@ -37,46 +45,59 @@ class WebhookUtils
     protected static function prepareDiscordPayload(Schematic $schematic, Tag $tag)
     {
         $eventType = $schematic->wasRecentlyCreated ? 'Created' : 'Updated';
-        $authors = $schematic->authors
-            ->map(function ($author) {
-                return [
-                    'name' => $author->name,
-                    'value' => "[Skin](https://mc-heads.net/avatar/{$author->name}/100/nohelm)",
-                    'inline' => true,
-                ];
-            })
-            ->toArray();
+        $mainAuthor = $schematic->authors->first();
 
-        return [
-            'embeds' => [
+        $authorInfo = $schematic->authors
+            ->map(function ($player) {
+                return "[{$player->lastSeenName}](https://minecraft-heads.com/profile/{$player->lastSeenName})";
+            })
+            ->implode(', ');
+
+        $embed = [
+            'title' => "Schematic {$eventType}: {$schematic->name}",
+            'description' => "A new schematic has been {$eventType} with the tag '{$tag->name}'.",
+            'color' => hexdec($tag->color ?? '7289DA'),
+            'fields' => [
                 [
-                    'title' => "Schematic {$eventType}: {$schematic->name}",
-                    'description' => "A schematic has been {$eventType} with the tag '{$tag->name}'",
-                    'color' => hexdec($tag->color ?? '7289DA'),
-                    'fields' => array_merge(
-                        [
-                            [
-                                'name' => 'Schematic ID',
-                                'value' => $schematic->short_id,
-                                'inline' => true,
-                            ],
-                            [
-                                'name' => 'Tag',
-                                'value' => $tag->name,
-                                'inline' => true,
-                            ],
-                        ],
-                        $authors,
-                    ),
-                    'image' => [
-                        'url' => $schematic->preview_image ?? ($schematic->preview_video ?? 'https://via.placeholder.com/500x300?text=No+Preview'),
-                    ],
-                    'thumbnail' => [
-                        'url' => "https://mc-heads.net/avatar/{$schematic->authors->first()->name}/100/nohelm",
-                    ],
-                    'timestamp' => now()->toIso8601String(),
+                    'name' => 'Schematic ID',
+                    'value' => $schematic->short_id,
+                    'inline' => true,
+                ],
+                [
+                    'name' => 'Tag',
+                    'value' => $tag->name,
+                    'inline' => true,
+                ],
+                [
+                    'name' => 'Authors',
+                    'value' => $authorInfo,
+                    'inline' => false,
+                ],
+                [
+                    'name' => 'Link',
+                    'value' => '[View Schematic](' . url("/schematics/{$schematic->short_id}") . ')',
+                    'inline' => false,
                 ],
             ],
+            'author' => [
+                'name' => $mainAuthor ? $mainAuthor->lastSeenName : 'Unknown Author',
+                'icon_url' => $mainAuthor ? "https://mc-heads.net/avatar/{$mainAuthor->lastSeenName}/100/nohelm" : null,
+            ],
+            'timestamp' => now()->toIso8601String(),
+        ];
+
+        if ($schematic->preview_image) {
+            $embed['image'] = ['url' => $schematic->preview_image];
+        }
+
+        $embed['thumbnail'] = [
+            'url' => $mainAuthor ? "https://mc-heads.net/avatar/{$mainAuthor->lastSeenName}/100/nohelm" : 'https://via.placeholder.com/100x100?text=No+Author',
+        ];
+
+        return [
+            'content' => "A new schematic has been {$eventType}!",
+            'embeds' => [$embed],
+            'attachments' => [],
         ];
     }
 
@@ -87,10 +108,11 @@ class WebhookUtils
             'schematic' => [
                 'id' => $schematic->short_id,
                 'name' => $schematic->name,
-                'authors' => $schematic->authors->map(function ($author) {
+                'authors' => $schematic->authors->map(function ($player) {
                     return [
-                        'name' => $author->name,
-                        'skin_url' => "https://mc-heads.net/avatar/{$author->name}/100/nohelm",
+                        'name' => $player->lastSeenName,
+                        'head_url' => "https://mc-heads.net/avatar/{$player->lastSeenName}/100/nohelm",
+                        'profile_url' => "https://minecraft-heads.com/profile/{$player->lastSeenName}",
                     ];
                 }),
                 'preview_image' => $schematic->preview_image,
